@@ -12,9 +12,6 @@ namespace JoySpeech {
         /// </summary>
         [STAThread]
         static void Main() {
-            //Teste.tt();
-            //var dd = Teste.FindWindowsWithText( "Snes9X v1.52 for Windows" );
-            //var ff = Teste.GetWindowText( dd.First() );
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault( false );
             Application.Run( new Form1() );

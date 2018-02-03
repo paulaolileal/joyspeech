@@ -75,10 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\ApplicationInput.cs" />
     <Compile Include="Components\Initialize.cs" />
-    <Compile Include="Components\ManagementEventWatcher.cs" />
-    <Compile Include="Components\Teste.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
