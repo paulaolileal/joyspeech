@@ -13,22 +13,25 @@ namespace JoySpeech.Models {
 
         STOP,
 
-        HOLD,
+        HOLD_MOVE,
+        HOLD_ACTION,
 
-        STICK_1_LEFT,
-        STICK_1_UP,
-        STICK_1_RIGHT,
-        STICK_1_DOWN,
-        STICK_1_CLICK,
+        STICK,
+        STICK_CLICK,
+        STICK_LEFT,
+        STICK_UP,
+        STICK_RIGHT,
+        STICK_DOWN,
 
-        STICK_2_LEFT,
-        STICK_2_UP,
-        STICK_2_RIGHT,
-        STICK_2_DOWN,
-        STICK_2_CLICK,
+        CAMERA,
+        CAMERA_CLICK,
+        CAMERA_LEFT,
+        CAMERA_UP,
+        CAMERA_RIGHT,
+        CAMERA_DOWN,
 
         START,
-        BACK,
+        SELECT,
         LOGO,
 
         X,
@@ -36,12 +39,23 @@ namespace JoySpeech.Models {
         A,
         B,
 
+        TRIGGER,
+
         LB,
         LT,
 
         RB,
         RT,
 
-        OTHER
+        OTHER,
+        NONE
+    }
+
+    enum KeyCategory {
+        MOVE,
+        ACTION,
+        TRIGGER,
+        MENU,
+        CONTROL
     }
 }

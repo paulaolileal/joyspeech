@@ -37,7 +37,23 @@ namespace JoySpeech {
             this.yBox = new System.Windows.Forms.TextBox();
             this.bBox = new System.Windows.Forms.TextBox();
             this.aBox = new System.Windows.Forms.TextBox();
-            this.holdBox = new System.Windows.Forms.TextBox();
+            this.hold_MoveBox = new System.Windows.Forms.TextBox();
+            this.stopBox = new System.Windows.Forms.TextBox();
+            this.stick_upBox = new System.Windows.Forms.TextBox();
+            this.stick_rightBox = new System.Windows.Forms.TextBox();
+            this.stick_leftBox = new System.Windows.Forms.TextBox();
+            this.stick_downBox = new System.Windows.Forms.TextBox();
+            this.camera_upBox = new System.Windows.Forms.TextBox();
+            this.camera_rightBox = new System.Windows.Forms.TextBox();
+            this.camera_leftBox = new System.Windows.Forms.TextBox();
+            this.camera_downBox = new System.Windows.Forms.TextBox();
+            this.cameraBox = new System.Windows.Forms.TextBox();
+            this.stickBox = new System.Windows.Forms.TextBox();
+            this.rtBox = new System.Windows.Forms.TextBox();
+            this.rbBox = new System.Windows.Forms.TextBox();
+            this.ltBox = new System.Windows.Forms.TextBox();
+            this.lbBox = new System.Windows.Forms.TextBox();
+            this.hold_ActionBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -149,14 +165,150 @@ namespace JoySpeech {
             this.aBox.TabIndex = 11;
             this.aBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // holdBox
+            // hold_MoveBox
             // 
-            this.holdBox.Location = new System.Drawing.Point(178, 346);
-            this.holdBox.Name = "holdBox";
-            this.holdBox.ReadOnly = true;
-            this.holdBox.Size = new System.Drawing.Size(56, 20);
-            this.holdBox.TabIndex = 12;
-            this.holdBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.hold_MoveBox.Location = new System.Drawing.Point(252, 320);
+            this.hold_MoveBox.Name = "hold_MoveBox";
+            this.hold_MoveBox.ReadOnly = true;
+            this.hold_MoveBox.Size = new System.Drawing.Size(56, 20);
+            this.hold_MoveBox.TabIndex = 12;
+            this.hold_MoveBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // stopBox
+            // 
+            this.stopBox.Location = new System.Drawing.Point(323, 320);
+            this.stopBox.Name = "stopBox";
+            this.stopBox.ReadOnly = true;
+            this.stopBox.Size = new System.Drawing.Size(56, 20);
+            this.stopBox.TabIndex = 13;
+            this.stopBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // stick_upBox
+            // 
+            this.stick_upBox.Location = new System.Drawing.Point(135, 96);
+            this.stick_upBox.Name = "stick_upBox";
+            this.stick_upBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_upBox.TabIndex = 14;
+            this.stick_upBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // stick_rightBox
+            // 
+            this.stick_rightBox.Location = new System.Drawing.Point(166, 122);
+            this.stick_rightBox.Name = "stick_rightBox";
+            this.stick_rightBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_rightBox.TabIndex = 15;
+            this.stick_rightBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // stick_leftBox
+            // 
+            this.stick_leftBox.Location = new System.Drawing.Point(104, 122);
+            this.stick_leftBox.Name = "stick_leftBox";
+            this.stick_leftBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_leftBox.TabIndex = 16;
+            this.stick_leftBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // stick_downBox
+            // 
+            this.stick_downBox.Location = new System.Drawing.Point(135, 149);
+            this.stick_downBox.Name = "stick_downBox";
+            this.stick_downBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_downBox.TabIndex = 17;
+            this.stick_downBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // camera_upBox
+            // 
+            this.camera_upBox.Location = new System.Drawing.Point(379, 193);
+            this.camera_upBox.Name = "camera_upBox";
+            this.camera_upBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_upBox.TabIndex = 18;
+            this.camera_upBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // camera_rightBox
+            // 
+            this.camera_rightBox.Location = new System.Drawing.Point(409, 222);
+            this.camera_rightBox.Name = "camera_rightBox";
+            this.camera_rightBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_rightBox.TabIndex = 19;
+            this.camera_rightBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // camera_leftBox
+            // 
+            this.camera_leftBox.Location = new System.Drawing.Point(346, 222);
+            this.camera_leftBox.Name = "camera_leftBox";
+            this.camera_leftBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_leftBox.TabIndex = 20;
+            this.camera_leftBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // camera_downBox
+            // 
+            this.camera_downBox.Location = new System.Drawing.Point(380, 250);
+            this.camera_downBox.Name = "camera_downBox";
+            this.camera_downBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_downBox.TabIndex = 21;
+            this.camera_downBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // cameraBox
+            // 
+            this.cameraBox.Location = new System.Drawing.Point(395, 320);
+            this.cameraBox.Name = "cameraBox";
+            this.cameraBox.ReadOnly = true;
+            this.cameraBox.Size = new System.Drawing.Size(56, 20);
+            this.cameraBox.TabIndex = 22;
+            this.cameraBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // stickBox
+            // 
+            this.stickBox.Location = new System.Drawing.Point(181, 320);
+            this.stickBox.Name = "stickBox";
+            this.stickBox.ReadOnly = true;
+            this.stickBox.Size = new System.Drawing.Size(56, 20);
+            this.stickBox.TabIndex = 23;
+            this.stickBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // rtBox
+            // 
+            this.rtBox.Location = new System.Drawing.Point(483, 31);
+            this.rtBox.Name = "rtBox";
+            this.rtBox.ReadOnly = true;
+            this.rtBox.Size = new System.Drawing.Size(56, 20);
+            this.rtBox.TabIndex = 24;
+            this.rtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // rbBox
+            // 
+            this.rbBox.Location = new System.Drawing.Point(449, 9);
+            this.rbBox.Name = "rbBox";
+            this.rbBox.ReadOnly = true;
+            this.rbBox.Size = new System.Drawing.Size(56, 20);
+            this.rbBox.TabIndex = 25;
+            this.rbBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // ltBox
+            // 
+            this.ltBox.Location = new System.Drawing.Point(104, 35);
+            this.ltBox.Name = "ltBox";
+            this.ltBox.ReadOnly = true;
+            this.ltBox.Size = new System.Drawing.Size(56, 20);
+            this.ltBox.TabIndex = 26;
+            this.ltBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // lbBox
+            // 
+            this.lbBox.Location = new System.Drawing.Point(135, 12);
+            this.lbBox.Name = "lbBox";
+            this.lbBox.ReadOnly = true;
+            this.lbBox.Size = new System.Drawing.Size(56, 20);
+            this.lbBox.TabIndex = 27;
+            this.lbBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // hold_ActionBox
+            // 
+            this.hold_ActionBox.Location = new System.Drawing.Point(395, 357);
+            this.hold_ActionBox.Name = "hold_ActionBox";
+            this.hold_ActionBox.ReadOnly = true;
+            this.hold_ActionBox.Size = new System.Drawing.Size(56, 20);
+            this.hold_ActionBox.TabIndex = 28;
+            this.hold_ActionBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Form1
             // 
@@ -164,7 +316,23 @@ namespace JoySpeech {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(645, 435);
-            this.Controls.Add(this.holdBox);
+            this.Controls.Add(this.hold_ActionBox);
+            this.Controls.Add(this.lbBox);
+            this.Controls.Add(this.ltBox);
+            this.Controls.Add(this.rbBox);
+            this.Controls.Add(this.rtBox);
+            this.Controls.Add(this.stickBox);
+            this.Controls.Add(this.cameraBox);
+            this.Controls.Add(this.camera_downBox);
+            this.Controls.Add(this.camera_leftBox);
+            this.Controls.Add(this.camera_rightBox);
+            this.Controls.Add(this.camera_upBox);
+            this.Controls.Add(this.stick_downBox);
+            this.Controls.Add(this.stick_leftBox);
+            this.Controls.Add(this.stick_rightBox);
+            this.Controls.Add(this.stick_upBox);
+            this.Controls.Add(this.stopBox);
+            this.Controls.Add(this.hold_MoveBox);
             this.Controls.Add(this.aBox);
             this.Controls.Add(this.bBox);
             this.Controls.Add(this.yBox);
@@ -202,7 +370,23 @@ namespace JoySpeech {
         private System.Windows.Forms.TextBox yBox;
         private System.Windows.Forms.TextBox bBox;
         private System.Windows.Forms.TextBox aBox;
-        private System.Windows.Forms.TextBox holdBox;
+        private System.Windows.Forms.TextBox hold_MoveBox;
+        private System.Windows.Forms.TextBox stopBox;
+        private System.Windows.Forms.TextBox stick_upBox;
+        private System.Windows.Forms.TextBox stick_rightBox;
+        private System.Windows.Forms.TextBox stick_leftBox;
+        private System.Windows.Forms.TextBox stick_downBox;
+        private System.Windows.Forms.TextBox camera_upBox;
+        private System.Windows.Forms.TextBox camera_rightBox;
+        private System.Windows.Forms.TextBox camera_leftBox;
+        private System.Windows.Forms.TextBox camera_downBox;
+        private System.Windows.Forms.TextBox cameraBox;
+        private System.Windows.Forms.TextBox stickBox;
+        private System.Windows.Forms.TextBox rtBox;
+        private System.Windows.Forms.TextBox rbBox;
+        private System.Windows.Forms.TextBox ltBox;
+        private System.Windows.Forms.TextBox lbBox;
+        private System.Windows.Forms.TextBox hold_ActionBox;
     }
 }
 
