@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,39 +23,83 @@ namespace JoySpeech {
         SpeechRecognitionEngine sre;
         Joystick joystick;
 
-        bool _HOLD;
+        Dictionary<JoystickKeys, TextBox> texts;
+
+        bool _HOLD_MOVE;
+        bool _HOLD_ACTION;
+        bool _STICK;
+        bool _TRIGGER;
+        bool _CAMERA;
 
         public Form1() {
+            // Create a new SpeechRecognitionEngine instance.
             sre = new SpeechRecognitionEngine( new System.Globalization.CultureInfo( "pt-BR" ) );
-            _HOLD = false;
+
+
+            _HOLD_MOVE = false;
+            _HOLD_ACTION = false;
+            _STICK = false;
+            _CAMERA = false;
+            _TRIGGER = false;
+
             InitializeComponent();
+
             Initialize.Joysticks();
             using (StreamReader reader = new StreamReader( Directory.GetCurrentDirectory() + @"\Joysticks\Super Mario World.json" )) {
-                joystick = JsonConvert.DeserializeObject<Joystick>(reader.ReadToEnd());
+                joystick = JsonConvert.DeserializeObject<Joystick>( reader.ReadToEnd() );
                 reader.Close();
             }
+            texts = new Dictionary<JoystickKeys, TextBox> {
+                // Stick
+                { JoystickKeys.STICK_LEFT, stick_leftBox },
+                { JoystickKeys.STICK_UP, stick_upBox },
+                { JoystickKeys.STICK_RIGHT, stick_rightBox },
+                { JoystickKeys.STICK_DOWN, stick_downBox },
+                { JoystickKeys.STICK, stickBox },
+                // Camera
+                { JoystickKeys.CAMERA_LEFT, camera_leftBox },
+                { JoystickKeys.CAMERA_UP, camera_upBox },
+                { JoystickKeys.CAMERA_RIGHT, camera_rightBox },
+                { JoystickKeys.CAMERA_DOWN, camera_downBox },
+                { JoystickKeys.CAMERA, cameraBox },
+                // Arrows
+                { JoystickKeys.LEFT, leftBox },
+                { JoystickKeys.UP, upBox },
+                { JoystickKeys.RIGHT, rightBox },
+                { JoystickKeys.DOWN, downBox },
+                // Action
+                { JoystickKeys.X, xBox },
+                { JoystickKeys.Y, yBox },
+                { JoystickKeys.A, aBox },
+                { JoystickKeys.B, bBox },
+                // Menu
+                { JoystickKeys.START, startBox },
+                { JoystickKeys.SELECT, selectBox },
+                { JoystickKeys.LOGO, logoBox },
+                // Control
+                { JoystickKeys.HOLD_MOVE, hold_MoveBox },
+                { JoystickKeys.HOLD_ACTION, hold_ActionBox },
+                { JoystickKeys.STOP, stopBox },
+                { JoystickKeys.TRIGGER, triggerBox },
+                // Trigger
+                { JoystickKeys.LB, lbBox },
+                { JoystickKeys.RB, rbBox },
 
-            leftBox.Text =  joystick.Map[ JoystickKeys.LEFT ].Command;
-            upBox.Text =    joystick.Map[ JoystickKeys.UP ].Command;
-            rightBox.Text = joystick.Map[ JoystickKeys.RIGHT ].Command;
-            downBox.Text =  joystick.Map[ JoystickKeys.DOWN ].Command;
-            xBox.Text =     joystick.Map[ JoystickKeys.X ].Command;
-            yBox.Text =     joystick.Map[ JoystickKeys.Y ].Command;
-            aBox.Text =     joystick.Map[ JoystickKeys.A ].Command;
-            bBox.Text =     joystick.Map[ JoystickKeys.B ].Command;
-            startBox.Text = joystick.Map[ JoystickKeys.START ].Command;
-            selectBox.Text =joystick.Map[ JoystickKeys.BACK ].Command;
-            logoBox.Text =  joystick.Map[ JoystickKeys.LOGO ].Command;
-            holdBox.Text =  joystick.Map[ JoystickKeys.HOLD ].Command;
+            };
 
-            // Create a new SpeechRecognitionEngine instance.
+            // Popule textsBox with the command
+            foreach (var x in texts) {
+                x.Value.Text = joystick.Map[ x.Key ].Command;
+                x.Value.Enabled = false;
+                x.Value.Font = new Font( FontFamily.GenericSerif, 8, FontStyle.Bold );
+            }
 
             // Configure the input to the recognizer.
             sre.SetInputToDefaultAudioDevice();
 
-            // Create a simple grammar that recognizes "red", "green", or "blue".
+            // Create a simple grammar that recognizes the commands.
             Choices commands = new Choices();
-            commands.Add( joystick.Map.ToList().Select( a => a.Value.Command ).ToArray());
+            commands.Add( joystick.Map.ToList().Where( b => b.Value.Valid == true ).Select( a => a.Value.Command ).ToArray() );
 
             // Create a GrammarBuilder object and append the Choices object.
             GrammarBuilder gb = new GrammarBuilder();
@@ -65,8 +110,8 @@ namespace JoySpeech {
             sre.LoadGrammar( g );
 
             // Register a handler for the SpeechRecognized event.
-            sre.SpeechRecognized +=
-              new EventHandler<SpeechRecognizedEventArgs>( sre_SpeechRecognized );
+            sre.SpeechHypothesized +=
+              new EventHandler<SpeechHypothesizedEventArgs>( sre_SpeechRecognized );
 
             Thread recognize = new Thread( () => {
                 while (true) {
@@ -78,139 +123,268 @@ namespace JoySpeech {
 
         }
 
-        private void Form1_Load(object sender, EventArgs e) {            
+        private void Form1_Load(object sender, EventArgs e) {
         }
 
+        public InputSimulator input = new InputSimulator();
         // Create a simple handler for the SpeechRecognized event.
-        void sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-           // MessageBox.Show( "Speech recognized: " + e.Result.Text  + " - Precision: " + e.Result.Confidence );
+        void sre_SpeechRecognized(object sender, SpeechHypothesizedEventArgs e) {
             Console.WriteLine( "Speech recognized: " + e.Result.Text + " - Precision: " + e.Result.Confidence );
-            InputSimulator input = new InputSimulator();
-            var x = joystick.Map.ToList().SingleOrDefault( a => a.Value.Command.Equals( e.Result.Text ) );
+            //if (e.Result.Confidence < 0.09) {
+            //    return;
+            //}
+            var x = joystick.Map.ToList().SingleOrDefault( a => a.Value.Command.Equals( e.Result.Text ) && a.Value.Valid );
+            VirtualKeyCode virtualKey = VirtualKeyCode.NONAME;
+            JoystickKeys joystickKey = JoystickKeys.NONE;
             switch (x.Key) {
-                case JoystickKeys.RIGHT:
-                    var left = joystick.Map[JoystickKeys.LEFT ].Input;
-                    if ( input.InputDeviceState.IsKeyDown(left)) {
-                        input.Keyboard.KeyUp( left );
-                        leftBox.Invoke( new Action( () => leftBox.BackColor = Color.White ) );
-                    }
-                    input.Keyboard.KeyDown( x.Value.Input );
-                    rightBox.Invoke( new Action( () => rightBox.BackColor = Color.Green ) );
+                case JoystickKeys.STICK:
+                    _STICK = !_STICK;
+                    texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _STICK ? Color.Green : Color.White ) ) );
+                    break;
+
+                case JoystickKeys.CAMERA:
+                    _CAMERA = !_CAMERA;
+                    texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _CAMERA ? Color.Green : Color.White ) ) );
                     break;
 
                 case JoystickKeys.LEFT:
-                    var right = joystick.Map[JoystickKeys.RIGHT].Input;
-                    if (input.InputDeviceState.IsKeyDown( right )) {
-                        input.Keyboard.KeyUp( right );
-                        rightBox.Invoke( new Action( () => rightBox.BackColor = Color.White ) );
+                    ReleaseMoveKeys();
+                    if (_STICK) {
+                        joystickKey = JoystickKeys.STICK_LEFT;
+                    } else if (_CAMERA) {
+                        joystickKey = JoystickKeys.CAMERA_LEFT;
+                    } else if (_TRIGGER) {
+                        joystickKey = JoystickKeys.LB;
+                    } else {
+                        joystickKey = JoystickKeys.LEFT;
                     }
-                    input.Keyboard.KeyDown( x.Value.Input );
-                    leftBox.Invoke( new Action( () => leftBox.BackColor = Color.Green ) );
+                    virtualKey = joystick.Map[ joystickKey ].Input;
+                    if (_HOLD_MOVE && !_TRIGGER) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else if (_HOLD_ACTION && _TRIGGER) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else {
+                        PressKey( joystickKey );
+                    }
+                    break;
+
+                case JoystickKeys.RIGHT:
+                    ReleaseMoveKeys();
+                    if (_STICK) {
+                        joystickKey = JoystickKeys.STICK_RIGHT;
+                    } else if (_CAMERA) {
+                        joystickKey = JoystickKeys.CAMERA_RIGHT;
+                    } else if (_TRIGGER) {
+                        joystickKey = JoystickKeys.RB;
+                    } else {
+                        joystickKey = JoystickKeys.RIGHT;
+                    }
+                    virtualKey = joystick.Map[ joystickKey ].Input;
+                    if (_HOLD_MOVE && !_TRIGGER) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else if (_HOLD_ACTION && _TRIGGER) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else {
+                        PressKey( joystickKey );
+                    }
                     break;
 
                 case JoystickKeys.UP:
-                    if (_HOLD) {
-                        input.Keyboard.KeyDown( x.Value.Input );
-                        upBox.Invoke( new Action( () => upBox.BackColor = Color.Green ) );
+                    ReleaseMoveKeys();
+                    if (_STICK) {
+                        joystickKey = JoystickKeys.STICK_UP;
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    } else if (_CAMERA) {
+                        joystickKey = JoystickKeys.CAMERA_UP;
+                        virtualKey = joystick.Map[ joystickKey ].Input;
                     } else {
-                        input.Keyboard.KeyDown( x.Value.Input );
-                        upBox.Invoke( new Action( () => upBox.BackColor = Color.Green ) );
-                        Thread.Sleep( 150 );
-                        input.Keyboard.KeyUp( x.Value.Input );
-                        upBox.Invoke( new Action( () => upBox.BackColor = Color.White ) );
-                    }                    
+                        joystickKey = JoystickKeys.UP;
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    }
+                    if (_HOLD_MOVE) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else {
+                        PressKey( joystickKey );
+                    }
                     break;
 
                 case JoystickKeys.DOWN:
-                    input.Keyboard.KeyDown( x.Value.Input );
-                    downBox.Invoke( new Action( () => downBox.BackColor = Color.Green ) );
-                    Thread.Sleep( 150 );
-                    input.Keyboard.KeyUp( x.Value.Input );
-                    downBox.Invoke( new Action( () => downBox.BackColor = Color.White ) );
+                    if (_STICK) {
+                        joystickKey = JoystickKeys.STICK_DOWN;
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    } else if (_CAMERA) {
+                        joystickKey = JoystickKeys.CAMERA_DOWN;
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    } else {
+                        joystickKey = JoystickKeys.DOWN;
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    }
+                    if (_HOLD_MOVE) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else {
+                        PressKey( joystickKey );
+                    }
                     break;
 
                 case JoystickKeys.STOP:
-                    foreach (var z in joystick.Map) {
-                        if (input.InputDeviceState.IsKeyDown( z.Value.Input )) {
-                            input.Keyboard.KeyUp( z.Value.Input );
-                        }
-                    }
-                    _HOLD = false;
-                    leftBox.Invoke(     new Action( () => leftBox.BackColor = Color.White ) );
-                    upBox.Invoke(       new Action( () => upBox.BackColor = Color.White ) );
-                    rightBox.Invoke(    new Action( () => rightBox.BackColor = Color.White ) );
-                    downBox.Invoke(     new Action( () => downBox.BackColor = Color.White ) );
-                    xBox.Invoke(        new Action( () => xBox.BackColor = Color.White ) );
-                    yBox.Invoke(        new Action( () => yBox.BackColor = Color.White ) );
-                    aBox.Invoke(        new Action( () => aBox.BackColor = Color.White ) );
-                    bBox.Invoke(        new Action( () => bBox.BackColor = Color.White ) );
-                    startBox.Invoke(    new Action( () => startBox.BackColor = Color.White ) );
-                    selectBox.Invoke(   new Action( () => selectBox.BackColor = Color.White ) );
-                    logoBox.Invoke(     new Action( () => logoBox.BackColor = Color.White ) );
-                    holdBox.Invoke(     new Action( () => holdBox.BackColor = Color.White ) );
-
+                    ReleaseMoveKeys();
+                    ReleaseActionKeys();
+                    ReleaseControlKeys();
+                    ReleaseTriggerKeys();
+                    PressKey( x.Key );
                     break;
 
                 case JoystickKeys.A:
-                    input.Keyboard.KeyDown( x.Value.Input );
-                    aBox.Invoke( new Action( () => aBox.BackColor = Color.Green ) );
-                    Thread.Sleep( 150 );
-                    input.Keyboard.KeyUp( x.Value.Input );
-                    aBox.Invoke( new Action( () => aBox.BackColor = Color.White ) );
+                    if (_HOLD_ACTION) {
+                        input.Keyboard.KeyPress( x.Value.Input );
+                    } else {
+                        PressKey( x.Key );
+                    }
                     break;
 
                 case JoystickKeys.B:
-                    input.Keyboard.KeyDown( x.Value.Input );
-                    bBox.Invoke( new Action( () => bBox.BackColor = Color.Green ) );
-                    Thread.Sleep( 150 );
-                    input.Keyboard.KeyUp( x.Value.Input );
-                    bBox.Invoke( new Action( () => bBox.BackColor = Color.White ) );
+                    if (_HOLD_ACTION) {
+                        input.Keyboard.KeyPress( x.Value.Input );
+                    } else {
+                        PressKey( x.Key );
+                    }
                     break;
 
                 case JoystickKeys.X:
-                    input.Keyboard.KeyDown( x.Value.Input );
-                    xBox.Invoke( new Action( () => xBox.BackColor = Color.Green ) );
-                    Thread.Sleep( 150 );
-                    input.Keyboard.KeyUp( x.Value.Input );
-                    xBox.Invoke( new Action( () => xBox.BackColor = Color.White ) );
+                    if (_HOLD_ACTION) {
+                        input.Keyboard.KeyPress( x.Value.Input );
+                    } else {
+                        PressKey( x.Key );
+                    }
                     break;
 
                 case JoystickKeys.Y:
-                    if (input.InputDeviceState.IsKeyDown( x.Value.Input )) {
-                        input.Keyboard.KeyUp( x.Value.Input );
-                        yBox.Invoke( new Action( () => yBox.BackColor = Color.White ) );
+                    if (_HOLD_ACTION) {
+                        input.Keyboard.KeyPress( x.Value.Input );
                     } else {
-                        input.Keyboard.KeyDown( x.Value.Input );
-                        yBox.Invoke( new Action( () => yBox.BackColor = Color.Green ) );
+                        PressKey( x.Key );
                     }
                     break;
 
-                case JoystickKeys.HOLD:
-                    _HOLD = !_HOLD;
-                    holdBox.Invoke( new Action( () => holdBox.BackColor = (_HOLD ? Color.Green : Color.White ) ) );
-                    if (!_HOLD) {
-                        foreach (var z in joystick.Map) {
-                            if (input.InputDeviceState.IsKeyDown( z.Value.Input )) {
-                                input.Keyboard.KeyUp( z.Value.Input );
-                            }
-                        }
+                case JoystickKeys.START:
+                    PressKey( x.Key );
+                    break;
 
-                        leftBox.Invoke( new Action( () => leftBox.BackColor = Color.White ) );
-                        upBox.Invoke( new Action( () => upBox.BackColor = Color.White ) );
-                        rightBox.Invoke( new Action( () => rightBox.BackColor = Color.White ) );
-                        downBox.Invoke( new Action( () => downBox.BackColor = Color.White ) );
-                        xBox.Invoke( new Action( () => xBox.BackColor = Color.White ) );
-                        yBox.Invoke( new Action( () => yBox.BackColor = Color.White ) );
-                        aBox.Invoke( new Action( () => aBox.BackColor = Color.White ) );
-                        bBox.Invoke( new Action( () => bBox.BackColor = Color.White ) );
-                        startBox.Invoke( new Action( () => startBox.BackColor = Color.White ) );
-                        selectBox.Invoke( new Action( () => selectBox.BackColor = Color.White ) );
-                        logoBox.Invoke( new Action( () => logoBox.BackColor = Color.White ) );
-                        
+                case JoystickKeys.SELECT:
+                    PressKey( x.Key );
+                    break;
+
+                case JoystickKeys.HOLD_MOVE:
+                    _HOLD_MOVE = !_HOLD_MOVE;
+                    texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _HOLD_MOVE ? Color.Green : Color.White ) ) );
+                    if (!_HOLD_MOVE) {
+                        ReleaseMoveKeys();
                     }
                     break;
 
+                case JoystickKeys.HOLD_ACTION:
+                    _HOLD_ACTION = !_HOLD_ACTION;
+                    texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _HOLD_ACTION ? Color.Green : Color.White ) ) );
+                    if (!_HOLD_ACTION) {
+                        ReleaseActionKeys();
+                        ReleaseTriggerKeys();
+                    }
+                    break;
+
+                case JoystickKeys.TRIGGER:
+                    _TRIGGER = !_TRIGGER;
+                    texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _TRIGGER ? Color.Green : Color.White ) ) );
+                    break;
+            }
+
+        }
+        private void ReleaseMoveKeys() {
+            foreach (var key in joystick.GetMoveKeys()) {
+                if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
+                    input.Keyboard.KeyUp( key.Value.Input );
+                }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
             }
         }
+
+        private void ReleaseActionKeys() {
+            foreach (var key in joystick.GetActionKeys()) {
+                if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
+                    input.Keyboard.KeyUp( key.Value.Input );
+                }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
+            }
+        }
+
+        private void ReleaseTriggerKeys() {
+            foreach (var key in joystick.GetTriggerKeys()) {
+                if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
+                    input.Keyboard.KeyUp( key.Value.Input );
+                }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
+            }
+        }
+
+        private void ReleaseControlKeys() {
+            foreach (var key in joystick.GetControlKeys()) {
+                if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
+                    input.Keyboard.KeyUp( key.Value.Input );
+                }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
+            }
+            _HOLD_MOVE = false;
+            //texts[ JoystickKeys.HOLD_MOVE ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+            _HOLD_ACTION = false;
+            //texts[ JoystickKeys.HOLD_ACTION ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+            _STICK = false;
+            //texts[ JoystickKeys.STICK ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+            _CAMERA = false;
+            //texts[ JoystickKeys.CAMERA ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+        }
+
+        private void ActiveBox(JoystickKeys key) {
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.Green ) );
+        }
+
+        private void DesactiveBox(JoystickKeys key) {
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White ) );
+        }
+
+        private void PressKey(JoystickKeys key) {
+            input.Keyboard.KeyDown( joystick.Map[ key ].Input );
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.Green ) );
+            Thread.Sleep( 150 );
+            input.Keyboard.KeyUp( joystick.Map[ key ].Input );
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White ) );
+        }
+
+
+        // Remove image borders
+        public static void UnSemi(Bitmap bmp) {
+            Size s = bmp.Size;
+            PixelFormat fmt = bmp.PixelFormat;
+            Rectangle rect = new Rectangle( Point.Empty, s );
+            BitmapData bmpData = bmp.LockBits( rect, ImageLockMode.ReadOnly, fmt );
+            int size1 = bmpData.Stride * bmpData.Height;
+            byte[] data = new byte[ size1 ];
+            System.Runtime.InteropServices.Marshal.Copy( bmpData.Scan0, data, 0, size1 );
+            for (int y = 0; y < s.Height; y++) {
+                for (int x = 0; x < s.Width; x++) {
+                    int index = y * bmpData.Stride + x * 4;
+                    // alpha,  threshold = 255
+                    data[ index + 3 ] = ( data[ index + 3 ] < 255 ) ? ( byte ) 0 : ( byte ) 255;
+                }
+            }
+            System.Runtime.InteropServices.Marshal.Copy( data, 0, bmpData.Scan0, data.Length );
+            bmp.UnlockBits( bmpData );
+        }
+
+
     }
 }
