@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,8 +28,8 @@ namespace JoySpeech {
         bool _HOLD_MOVE;
         bool _HOLD_ACTION;
         bool _STICK;
+        bool _TRIGGER;
         bool _CAMERA;
-        bool _inExecution;
 
         public Form1() {
             // Create a new SpeechRecognitionEngine instance.
@@ -39,7 +40,7 @@ namespace JoySpeech {
             _HOLD_ACTION = false;
             _STICK = false;
             _CAMERA = false;
-            _inExecution = false;
+            _TRIGGER = false;
 
             InitializeComponent();
 
@@ -78,19 +79,25 @@ namespace JoySpeech {
                 // Control
                 { JoystickKeys.HOLD_MOVE, hold_MoveBox },
                 { JoystickKeys.HOLD_ACTION, hold_ActionBox },
-                { JoystickKeys.STOP, stopBox }
+                { JoystickKeys.STOP, stopBox },
+                { JoystickKeys.TRIGGER, triggerBox },
+                // Trigger
+                { JoystickKeys.LB, lbBox },
+                { JoystickKeys.RB, rbBox },
 
             };
 
             // Popule textsBox with the command
             foreach (var x in texts) {
                 x.Value.Text = joystick.Map[ x.Key ].Command;
+                x.Value.Enabled = false;
+                x.Value.Font = new Font( FontFamily.GenericSerif, 8, FontStyle.Bold );
             }
 
             // Configure the input to the recognizer.
             sre.SetInputToDefaultAudioDevice();
 
-            // Create a simple grammar that recognizes "red", "green", or "blue".
+            // Create a simple grammar that recognizes the commands.
             Choices commands = new Choices();
             commands.Add( joystick.Map.ToList().Where( b => b.Value.Valid == true ).Select( a => a.Value.Command ).ToArray() );
 
@@ -109,7 +116,7 @@ namespace JoySpeech {
             Thread recognize = new Thread( () => {
                 while (true) {
                     // Start recognition.
-                        sre.Recognize();
+                    sre.Recognize();
                 }
             } );
             recognize.Start();
@@ -122,9 +129,8 @@ namespace JoySpeech {
         public InputSimulator input = new InputSimulator();
         // Create a simple handler for the SpeechRecognized event.
         void sre_SpeechRecognized(object sender, SpeechHypothesizedEventArgs e) {
-            // MessageBox.Show( "Speech recognized: " + e.Result.Text  + " - Precision: " + e.Result.Confidence );
             Console.WriteLine( "Speech recognized: " + e.Result.Text + " - Precision: " + e.Result.Confidence );
-            //if(e.Result.Confidence < 0.2) {
+            //if (e.Result.Confidence < 0.09) {
             //    return;
             //}
             var x = joystick.Map.ToList().SingleOrDefault( a => a.Value.Command.Equals( e.Result.Text ) && a.Value.Valid );
@@ -145,15 +151,18 @@ namespace JoySpeech {
                     ReleaseMoveKeys();
                     if (_STICK) {
                         joystickKey = JoystickKeys.STICK_LEFT;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
                     } else if (_CAMERA) {
                         joystickKey = JoystickKeys.CAMERA_LEFT;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    } else if (_TRIGGER) {
+                        joystickKey = JoystickKeys.LB;
                     } else {
                         joystickKey = JoystickKeys.LEFT;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
                     }
-                    if (_HOLD_MOVE) {
+                    virtualKey = joystick.Map[ joystickKey ].Input;
+                    if (_HOLD_MOVE && !_TRIGGER) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else if (_HOLD_ACTION && _TRIGGER) {
                         input.Keyboard.KeyDown( virtualKey );
                         ActiveBox( joystickKey );
                     } else {
@@ -165,15 +174,18 @@ namespace JoySpeech {
                     ReleaseMoveKeys();
                     if (_STICK) {
                         joystickKey = JoystickKeys.STICK_RIGHT;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
                     } else if (_CAMERA) {
                         joystickKey = JoystickKeys.CAMERA_RIGHT;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
+                    } else if (_TRIGGER) {
+                        joystickKey = JoystickKeys.RB;
                     } else {
                         joystickKey = JoystickKeys.RIGHT;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
                     }
-                    if (_HOLD_MOVE) {
+                    virtualKey = joystick.Map[ joystickKey ].Input;
+                    if (_HOLD_MOVE && !_TRIGGER) {
+                        input.Keyboard.KeyDown( virtualKey );
+                        ActiveBox( joystickKey );
+                    } else if (_HOLD_ACTION && _TRIGGER) {
                         input.Keyboard.KeyDown( virtualKey );
                         ActiveBox( joystickKey );
                     } else {
@@ -223,6 +235,8 @@ namespace JoySpeech {
                 case JoystickKeys.STOP:
                     ReleaseMoveKeys();
                     ReleaseActionKeys();
+                    ReleaseControlKeys();
+                    ReleaseTriggerKeys();
                     PressKey( x.Key );
                     break;
 
@@ -258,6 +272,14 @@ namespace JoySpeech {
                     }
                     break;
 
+                case JoystickKeys.START:
+                    PressKey( x.Key );
+                    break;
+
+                case JoystickKeys.SELECT:
+                    PressKey( x.Key );
+                    break;
+
                 case JoystickKeys.HOLD_MOVE:
                     _HOLD_MOVE = !_HOLD_MOVE;
                     texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _HOLD_MOVE ? Color.Green : Color.White ) ) );
@@ -271,7 +293,13 @@ namespace JoySpeech {
                     texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _HOLD_ACTION ? Color.Green : Color.White ) ) );
                     if (!_HOLD_ACTION) {
                         ReleaseActionKeys();
+                        ReleaseTriggerKeys();
                     }
+                    break;
+
+                case JoystickKeys.TRIGGER:
+                    _TRIGGER = !_TRIGGER;
+                    texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = ( _TRIGGER ? Color.Green : Color.White ) ) );
                     break;
             }
 
@@ -280,8 +308,8 @@ namespace JoySpeech {
             foreach (var key in joystick.GetMoveKeys()) {
                 if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
                     input.Keyboard.KeyUp( key.Value.Input );
-                    texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
                 }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
             }
         }
 
@@ -289,9 +317,35 @@ namespace JoySpeech {
             foreach (var key in joystick.GetActionKeys()) {
                 if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
                     input.Keyboard.KeyUp( key.Value.Input );
-                    texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
                 }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
             }
+        }
+
+        private void ReleaseTriggerKeys() {
+            foreach (var key in joystick.GetTriggerKeys()) {
+                if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
+                    input.Keyboard.KeyUp( key.Value.Input );
+                }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
+            }
+        }
+
+        private void ReleaseControlKeys() {
+            foreach (var key in joystick.GetControlKeys()) {
+                if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
+                    input.Keyboard.KeyUp( key.Value.Input );
+                }
+                texts[ key.Key ].Invoke( new Action( () => texts[ key.Key ].BackColor = Color.White ) );
+            }
+            _HOLD_MOVE = false;
+            //texts[ JoystickKeys.HOLD_MOVE ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+            _HOLD_ACTION = false;
+            //texts[ JoystickKeys.HOLD_ACTION ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+            _STICK = false;
+            //texts[ JoystickKeys.STICK ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
+            _CAMERA = false;
+            //texts[ JoystickKeys.CAMERA ].Invoke( new Action( () => texts[ JoystickKeys.HOLD_MOVE ].BackColor = Color.White ) );
         }
 
         private void ActiveBox(JoystickKeys key) {
@@ -308,6 +362,27 @@ namespace JoySpeech {
             Thread.Sleep( 150 );
             input.Keyboard.KeyUp( joystick.Map[ key ].Input );
             texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White ) );
+        }
+
+
+        // Remove image borders
+        public static void UnSemi(Bitmap bmp) {
+            Size s = bmp.Size;
+            PixelFormat fmt = bmp.PixelFormat;
+            Rectangle rect = new Rectangle( Point.Empty, s );
+            BitmapData bmpData = bmp.LockBits( rect, ImageLockMode.ReadOnly, fmt );
+            int size1 = bmpData.Stride * bmpData.Height;
+            byte[] data = new byte[ size1 ];
+            System.Runtime.InteropServices.Marshal.Copy( bmpData.Scan0, data, 0, size1 );
+            for (int y = 0; y < s.Height; y++) {
+                for (int x = 0; x < s.Width; x++) {
+                    int index = y * bmpData.Stride + x * 4;
+                    // alpha,  threshold = 255
+                    data[ index + 3 ] = ( data[ index + 3 ] < 255 ) ? ( byte ) 0 : ( byte ) 255;
+                }
+            }
+            System.Runtime.InteropServices.Marshal.Copy( data, 0, bmpData.Scan0, data.Length );
+            bmp.UnlockBits( bmpData );
         }
 
 

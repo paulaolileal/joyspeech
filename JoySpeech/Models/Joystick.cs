@@ -43,5 +43,13 @@ namespace JoySpeech.Models {
 
             return resp;
         }
+
+        public Dictionary<JoystickKeys, KeyCommand> GetTriggerKeys() {
+            return Map.Where( a => a.Value.Category == KeyCategory.TRIGGER ).ToDictionary( b => b.Key, c => c.Value );
+        }
+
+        public Dictionary<JoystickKeys, KeyCommand> GetControlKeys() {
+            return Map.Where( a => a.Value.Category == KeyCategory.CONTROL ).ToDictionary( b => b.Key, c => c.Value );
+        }
     }
 }

@@ -63,9 +63,9 @@ namespace JoySpeech.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap controller_1827840_640 {
+        internal static System.Drawing.Bitmap Controle {
             get {
-                object obj = ResourceManager.GetObject("controller-1827840_640", resourceCulture);
+                object obj = ResourceManager.GetObject("Controle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
