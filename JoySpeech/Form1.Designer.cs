@@ -306,7 +306,7 @@ namespace JoySpeech {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Magenta;
+            this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(685, 457);
             this.Controls.Add(this.triggerBox);
             this.Controls.Add(this.hold_ActionBox);
@@ -341,7 +341,7 @@ namespace JoySpeech {
             this.Text = "Form1";
             this.TransparencyKey = this.BackColor;
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            UnSemi( ( Bitmap ) this.pictureBox1.Image );
             this.ResumeLayout(false);
             this.PerformLayout();
 

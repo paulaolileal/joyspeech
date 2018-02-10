@@ -243,6 +243,7 @@ namespace JoySpeech {
                 case JoystickKeys.A:
                     if (_HOLD_ACTION) {
                         input.Keyboard.KeyPress( x.Value.Input );
+                        texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = Color.Green ) );
                     } else {
                         PressKey( x.Key );
                     }
@@ -251,6 +252,7 @@ namespace JoySpeech {
                 case JoystickKeys.B:
                     if (_HOLD_ACTION) {
                         input.Keyboard.KeyPress( x.Value.Input );
+                        texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = Color.Green ) );
                     } else {
                         PressKey( x.Key );
                     }
@@ -259,6 +261,7 @@ namespace JoySpeech {
                 case JoystickKeys.X:
                     if (_HOLD_ACTION) {
                         input.Keyboard.KeyPress( x.Value.Input );
+                        texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = Color.Green ) );
                     } else {
                         PressKey( x.Key );
                     }
@@ -267,6 +270,7 @@ namespace JoySpeech {
                 case JoystickKeys.Y:
                     if (_HOLD_ACTION) {
                         input.Keyboard.KeyPress( x.Value.Input );
+                        texts[ x.Key ].Invoke( new Action( () => texts[ x.Key ].BackColor = Color.Green ));
                     } else {
                         PressKey( x.Key );
                     }
