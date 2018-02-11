@@ -17,10 +17,10 @@ namespace JoySpeech.Models {
             return Map.Where( a => a.Value.Category == KeyCategory.ACTION ).ToDictionary( b=> b.Key, c => c.Value );
         }
 
-        public Dictionary<JoystickKeys, KeyCommand> GetMoveKeys( bool basic = true, bool stick = true, bool camera = true ) {
+        public Dictionary<JoystickKeys, KeyCommand> GetMoveKeys( bool arrow = true, bool stick = true, bool camera = true ) {
             var resp = new Dictionary<JoystickKeys, KeyCommand>();
 
-            if (basic) {
+            if (arrow) {
                 resp.Add( JoystickKeys.LEFT, Map[ JoystickKeys.LEFT ] );
                 resp.Add( JoystickKeys.UP, Map[ JoystickKeys.UP ] );
                 resp.Add( JoystickKeys.RIGHT, Map[ JoystickKeys.RIGHT ] );
@@ -38,8 +38,6 @@ namespace JoySpeech.Models {
                 resp.Add( JoystickKeys.CAMERA_RIGHT, Map[ JoystickKeys.CAMERA_RIGHT ] );
                 resp.Add( JoystickKeys.CAMERA_DOWN, Map[ JoystickKeys.CAMERA_DOWN ] );
             }
-
-           // return Map.Select( a => a.Value.Category == KeyCategory.MOVE );
 
             return resp;
         }

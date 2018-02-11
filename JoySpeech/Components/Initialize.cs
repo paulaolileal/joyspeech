@@ -157,10 +157,11 @@ namespace JoySpeech.Components {
                 km.Map.Add( JoystickKeys.Y,
                 new KeyCommand {
                     Command = "CORRER",
+                    CanHold = true,
                     Category = KeyCategory.ACTION,
                     Input = VirtualKeyCode.VK_X
                 } );
-                // TODO: MAPEAR OS GATILHOS
+
                 km.Map.Add( JoystickKeys.TRIGGER,
                 new KeyCommand {
                     Command = "GATILHO",
@@ -208,13 +209,6 @@ namespace JoySpeech.Components {
                 km.Map.Add( JoystickKeys.HOLD_MOVE,
                 new KeyCommand {
                     Command = "SEGUIR",
-                    Category = KeyCategory.CONTROL,
-                    Input = VirtualKeyCode.NONAME
-                } );
-
-                km.Map.Add( JoystickKeys.HOLD_ACTION,
-                new KeyCommand {
-                    Command = "PRESSIONAR",
                     Category = KeyCategory.CONTROL,
                     Input = VirtualKeyCode.NONAME
                 } );

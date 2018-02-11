@@ -51,7 +51,6 @@ namespace JoySpeech {
             this.stickBox = new System.Windows.Forms.TextBox();
             this.rbBox = new System.Windows.Forms.TextBox();
             this.lbBox = new System.Windows.Forms.TextBox();
-            this.hold_ActionBox = new System.Windows.Forms.TextBox();
             this.triggerBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -130,6 +129,7 @@ namespace JoySpeech {
             // 
             // yBox
             // 
+            this.yBox.BackColor = System.Drawing.SystemColors.Control;
             this.yBox.Location = new System.Drawing.Point(484, 100);
             this.yBox.Name = "yBox";
             this.yBox.ReadOnly = true;
@@ -157,7 +157,7 @@ namespace JoySpeech {
             // 
             // hold_MoveBox
             // 
-            this.hold_MoveBox.Location = new System.Drawing.Point(204, 415);
+            this.hold_MoveBox.Location = new System.Drawing.Point(239, 372);
             this.hold_MoveBox.Name = "hold_MoveBox";
             this.hold_MoveBox.ReadOnly = true;
             this.hold_MoveBox.Size = new System.Drawing.Size(84, 20);
@@ -166,7 +166,7 @@ namespace JoySpeech {
             // 
             // stopBox
             // 
-            this.stopBox.Location = new System.Drawing.Point(301, 415);
+            this.stopBox.Location = new System.Drawing.Point(354, 371);
             this.stopBox.Name = "stopBox";
             this.stopBox.ReadOnly = true;
             this.stopBox.Size = new System.Drawing.Size(91, 20);
@@ -239,7 +239,7 @@ namespace JoySpeech {
             // 
             // cameraBox
             // 
-            this.cameraBox.Location = new System.Drawing.Point(406, 373);
+            this.cameraBox.Location = new System.Drawing.Point(412, 412);
             this.cameraBox.Name = "cameraBox";
             this.cameraBox.ReadOnly = true;
             this.cameraBox.Size = new System.Drawing.Size(79, 20);
@@ -248,7 +248,7 @@ namespace JoySpeech {
             // 
             // stickBox
             // 
-            this.stickBox.Location = new System.Drawing.Point(204, 373);
+            this.stickBox.Location = new System.Drawing.Point(181, 412);
             this.stickBox.Name = "stickBox";
             this.stickBox.ReadOnly = true;
             this.stickBox.Size = new System.Drawing.Size(84, 20);
@@ -257,34 +257,25 @@ namespace JoySpeech {
             // 
             // rbBox
             // 
-            this.rbBox.Location = new System.Drawing.Point(461, 32);
+            this.rbBox.Location = new System.Drawing.Point(435, 32);
             this.rbBox.Name = "rbBox";
             this.rbBox.ReadOnly = true;
-            this.rbBox.Size = new System.Drawing.Size(56, 20);
+            this.rbBox.Size = new System.Drawing.Size(79, 20);
             this.rbBox.TabIndex = 25;
             this.rbBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lbBox
             // 
-            this.lbBox.Location = new System.Drawing.Point(181, 32);
+            this.lbBox.Location = new System.Drawing.Point(169, 32);
             this.lbBox.Name = "lbBox";
             this.lbBox.ReadOnly = true;
-            this.lbBox.Size = new System.Drawing.Size(56, 20);
+            this.lbBox.Size = new System.Drawing.Size(79, 20);
             this.lbBox.TabIndex = 27;
             this.lbBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // hold_ActionBox
-            // 
-            this.hold_ActionBox.Location = new System.Drawing.Point(406, 415);
-            this.hold_ActionBox.Name = "hold_ActionBox";
-            this.hold_ActionBox.ReadOnly = true;
-            this.hold_ActionBox.Size = new System.Drawing.Size(79, 20);
-            this.hold_ActionBox.TabIndex = 28;
-            this.hold_ActionBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // triggerBox
             // 
-            this.triggerBox.Location = new System.Drawing.Point(301, 373);
+            this.triggerBox.Location = new System.Drawing.Point(294, 412);
             this.triggerBox.Name = "triggerBox";
             this.triggerBox.ReadOnly = true;
             this.triggerBox.Size = new System.Drawing.Size(91, 20);
@@ -309,7 +300,6 @@ namespace JoySpeech {
             this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(685, 457);
             this.Controls.Add(this.triggerBox);
-            this.Controls.Add(this.hold_ActionBox);
             this.Controls.Add(this.lbBox);
             this.Controls.Add(this.rbBox);
             this.Controls.Add(this.stickBox);
@@ -340,8 +330,7 @@ namespace JoySpeech {
             this.Name = "Form1";
             this.Text = "Form1";
             this.TransparencyKey = this.BackColor;
-            this.Load += new System.EventHandler(this.Form1_Load);
-            UnSemi( ( Bitmap ) this.pictureBox1.Image );
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -375,7 +364,6 @@ namespace JoySpeech {
         private System.Windows.Forms.TextBox stickBox;
         private System.Windows.Forms.TextBox rbBox;
         private System.Windows.Forms.TextBox lbBox;
-        private System.Windows.Forms.TextBox hold_ActionBox;
         private System.Windows.Forms.TextBox triggerBox;
     }
 }

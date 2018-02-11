@@ -11,6 +11,8 @@ namespace JoySpeech.Models {
         public string Command { get; set; }
         private bool valid = true;
         public bool Valid { get => valid; set => valid = value; }
+        private bool canHold = false;
+        public bool CanHold { get => canHold; set => canHold = value; }
         public KeyCategory Category { get; set; }
         public VirtualKeyCode Input { get; set; }
     }
