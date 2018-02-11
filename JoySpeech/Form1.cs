@@ -358,6 +358,10 @@ namespace JoySpeech {
                     PressKey( command.Key );
                     break;
 
+                case JoystickKeys.LOGO:
+                    PressKey( command.Key );
+                    break;
+
                 default:
                     break;
             }
