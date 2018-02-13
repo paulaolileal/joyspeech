@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace JoySpeech.Models {
-    enum JoystickKeys {
+    public enum JoystickKeys {
         LEFT,
         UP,
         RIGHT,
@@ -51,11 +51,15 @@ namespace JoySpeech.Models {
         NONE
     }
 
-    enum KeyCategory {
+    public enum KeyCategory {
         MOVE,
         ACTION,
         TRIGGER,
         MENU,
-        CONTROL
+        CONTROL,
+
+        STICK,
+        CAMERA,
+        ARROW
     }
 }

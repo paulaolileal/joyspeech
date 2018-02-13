@@ -61,7 +61,7 @@ namespace JoySpeech {
             this.leftBox.Location = new System.Drawing.Point(208, 242);
             this.leftBox.Name = "leftBox";
             this.leftBox.ReadOnly = true;
-            this.leftBox.Size = new System.Drawing.Size(56, 20);
+            this.leftBox.Size = new System.Drawing.Size(56, 23);
             this.leftBox.TabIndex = 1;
             this.leftBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -69,7 +69,7 @@ namespace JoySpeech {
             // 
             this.upBox.Location = new System.Drawing.Point(236, 216);
             this.upBox.Name = "upBox";
-            this.upBox.Size = new System.Drawing.Size(56, 20);
+            this.upBox.Size = new System.Drawing.Size(56, 23);
             this.upBox.TabIndex = 2;
             this.upBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -78,7 +78,7 @@ namespace JoySpeech {
             this.rightBox.Location = new System.Drawing.Point(267, 242);
             this.rightBox.Name = "rightBox";
             this.rightBox.ReadOnly = true;
-            this.rightBox.Size = new System.Drawing.Size(56, 20);
+            this.rightBox.Size = new System.Drawing.Size(56, 23);
             this.rightBox.TabIndex = 3;
             this.rightBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -87,7 +87,7 @@ namespace JoySpeech {
             this.downBox.Location = new System.Drawing.Point(236, 270);
             this.downBox.Name = "downBox";
             this.downBox.ReadOnly = true;
-            this.downBox.Size = new System.Drawing.Size(56, 20);
+            this.downBox.Size = new System.Drawing.Size(56, 23);
             this.downBox.TabIndex = 4;
             this.downBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -96,7 +96,7 @@ namespace JoySpeech {
             this.logoBox.Location = new System.Drawing.Point(314, 69);
             this.logoBox.Name = "logoBox";
             this.logoBox.ReadOnly = true;
-            this.logoBox.Size = new System.Drawing.Size(56, 20);
+            this.logoBox.Size = new System.Drawing.Size(56, 23);
             this.logoBox.TabIndex = 5;
             this.logoBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -105,7 +105,7 @@ namespace JoySpeech {
             this.selectBox.Location = new System.Drawing.Point(273, 142);
             this.selectBox.Name = "selectBox";
             this.selectBox.ReadOnly = true;
-            this.selectBox.Size = new System.Drawing.Size(56, 20);
+            this.selectBox.Size = new System.Drawing.Size(56, 23);
             this.selectBox.TabIndex = 6;
             this.selectBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -114,7 +114,7 @@ namespace JoySpeech {
             this.startBox.Location = new System.Drawing.Point(366, 142);
             this.startBox.Name = "startBox";
             this.startBox.ReadOnly = true;
-            this.startBox.Size = new System.Drawing.Size(56, 20);
+            this.startBox.Size = new System.Drawing.Size(56, 23);
             this.startBox.TabIndex = 7;
             this.startBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -123,7 +123,7 @@ namespace JoySpeech {
             this.xBox.Location = new System.Drawing.Point(441, 142);
             this.xBox.Name = "xBox";
             this.xBox.ReadOnly = true;
-            this.xBox.Size = new System.Drawing.Size(56, 20);
+            this.xBox.Size = new System.Drawing.Size(56, 23);
             this.xBox.TabIndex = 8;
             this.xBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -133,7 +133,7 @@ namespace JoySpeech {
             this.yBox.Location = new System.Drawing.Point(484, 100);
             this.yBox.Name = "yBox";
             this.yBox.ReadOnly = true;
-            this.yBox.Size = new System.Drawing.Size(56, 20);
+            this.yBox.Size = new System.Drawing.Size(56, 23);
             this.yBox.TabIndex = 9;
             this.yBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -142,7 +142,7 @@ namespace JoySpeech {
             this.bBox.Location = new System.Drawing.Point(527, 142);
             this.bBox.Name = "bBox";
             this.bBox.ReadOnly = true;
-            this.bBox.Size = new System.Drawing.Size(56, 20);
+            this.bBox.Size = new System.Drawing.Size(56, 23);
             this.bBox.TabIndex = 10;
             this.bBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -151,7 +151,7 @@ namespace JoySpeech {
             this.aBox.Location = new System.Drawing.Point(484, 187);
             this.aBox.Name = "aBox";
             this.aBox.ReadOnly = true;
-            this.aBox.Size = new System.Drawing.Size(56, 20);
+            this.aBox.Size = new System.Drawing.Size(56, 23);
             this.aBox.TabIndex = 11;
             this.aBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -177,23 +177,23 @@ namespace JoySpeech {
             // 
             this.stick_upBox.Location = new System.Drawing.Point(157, 111);
             this.stick_upBox.Name = "stick_upBox";
-            this.stick_upBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_upBox.Size = new System.Drawing.Size(56, 23);
             this.stick_upBox.TabIndex = 14;
             this.stick_upBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // stick_rightBox
             // 
-            this.stick_rightBox.Location = new System.Drawing.Point(181, 137);
+            this.stick_rightBox.Location = new System.Drawing.Point(187, 137);
             this.stick_rightBox.Name = "stick_rightBox";
-            this.stick_rightBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_rightBox.Size = new System.Drawing.Size(56, 23);
             this.stick_rightBox.TabIndex = 15;
             this.stick_rightBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // stick_leftBox
             // 
-            this.stick_leftBox.Location = new System.Drawing.Point(119, 137);
+            this.stick_leftBox.Location = new System.Drawing.Point(125, 137);
             this.stick_leftBox.Name = "stick_leftBox";
-            this.stick_leftBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_leftBox.Size = new System.Drawing.Size(56, 23);
             this.stick_leftBox.TabIndex = 16;
             this.stick_leftBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -201,7 +201,7 @@ namespace JoySpeech {
             // 
             this.stick_downBox.Location = new System.Drawing.Point(157, 165);
             this.stick_downBox.Name = "stick_downBox";
-            this.stick_downBox.Size = new System.Drawing.Size(56, 20);
+            this.stick_downBox.Size = new System.Drawing.Size(56, 23);
             this.stick_downBox.TabIndex = 17;
             this.stick_downBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -209,23 +209,23 @@ namespace JoySpeech {
             // 
             this.camera_upBox.Location = new System.Drawing.Point(401, 216);
             this.camera_upBox.Name = "camera_upBox";
-            this.camera_upBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_upBox.Size = new System.Drawing.Size(56, 23);
             this.camera_upBox.TabIndex = 18;
             this.camera_upBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // camera_rightBox
             // 
-            this.camera_rightBox.Location = new System.Drawing.Point(435, 242);
+            this.camera_rightBox.Location = new System.Drawing.Point(431, 242);
             this.camera_rightBox.Name = "camera_rightBox";
-            this.camera_rightBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_rightBox.Size = new System.Drawing.Size(56, 23);
             this.camera_rightBox.TabIndex = 19;
             this.camera_rightBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // camera_leftBox
             // 
-            this.camera_leftBox.Location = new System.Drawing.Point(366, 242);
+            this.camera_leftBox.Location = new System.Drawing.Point(370, 242);
             this.camera_leftBox.Name = "camera_leftBox";
-            this.camera_leftBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_leftBox.Size = new System.Drawing.Size(56, 23);
             this.camera_leftBox.TabIndex = 20;
             this.camera_leftBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -233,7 +233,7 @@ namespace JoySpeech {
             // 
             this.camera_downBox.Location = new System.Drawing.Point(401, 270);
             this.camera_downBox.Name = "camera_downBox";
-            this.camera_downBox.Size = new System.Drawing.Size(56, 20);
+            this.camera_downBox.Size = new System.Drawing.Size(56, 23);
             this.camera_downBox.TabIndex = 21;
             this.camera_downBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
