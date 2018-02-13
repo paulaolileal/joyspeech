@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -34,22 +35,30 @@ namespace JoySpeech {
         bool _STICK;
         bool _TRIGGER;
         bool _CAMERA;
+        
 
         // Action variables
         bool _A;
         bool _B;
         bool _X;
         bool _Y;
+        
+
+        bool _canRecognize;
 
         public Form1() {
             // Create a new SpeechRecognitionEngine instance.
             sre = new SpeechRecognitionEngine( new System.Globalization.CultureInfo( "pt-BR" ) );
             input = new InputSimulator();
+            
             // Initialize control variables
             _HOLD_MOVE = false;
             _STICK = false;
             _CAMERA = false;
             _TRIGGER = false;
+
+            _canRecognize = true;
+
             // Initialize action variables
             _A = false;
             _B = false;
@@ -57,14 +66,6 @@ namespace JoySpeech {
             _Y = false;
 
             InitializeComponent();
-            // Create joysticks's files case not exists
-            Initialize.Joysticks();
-
-            // Load saved joysticks
-            using (StreamReader reader = new StreamReader( Directory.GetCurrentDirectory() + @"\Joysticks\Super Mario World.json" )) {
-                joystick = JsonConvert.DeserializeObject<Joystick>( reader.ReadToEnd() );
-                reader.Close();
-            }
 
             // Map the textbox to the joystick key
             texts = new Dictionary<JoystickKeys, TextBox> {
@@ -103,47 +104,21 @@ namespace JoySpeech {
                 { JoystickKeys.RB, rbBox },
             };
 
-            // Popule textsBox with the command
-            foreach (var x in texts) {
-                x.Value.Text = joystick.Map[ x.Key ].Command;
-                x.Value.Enabled = false;
-                x.Value.Font = new Font( FontFamily.GenericSansSerif,  8, FontStyle.Regular );
-            }
+
             // Remove the joystck's border
             UnSemi( ( Bitmap ) this.pictureBox1.Image );
-
-            // Configure the input to the recognizer.
-            sre.SetInputToDefaultAudioDevice();
-
-            // Create a simple grammar that recognizes the commands.
-            Choices commands = new Choices();
-            commands.Add( joystick.Map.ToList().Where( b => b.Value.Valid == true ).Select( a => a.Value.Command ).ToArray() );
-
-            // Create a GrammarBuilder object and append the Choices object.
-            GrammarBuilder gb = new GrammarBuilder();
-            gb.Append( commands );
-
-            // Create the Grammar instance and load it into the speech recognition engine.
-            Grammar g = new Grammar( gb );
-            sre.LoadGrammar( g );
-
-            // Register a handler for the SpeechRecognized event.
-            sre.SpeechHypothesized += new EventHandler<SpeechHypothesizedEventArgs>( sre_SpeechRecognized );
-
+            
             // Initilize the recognition in parallel thread
-            Thread recognize = new Thread( () => {
-                while (true) {
-                    // Start recognition.
-                    sre.Recognize();
-                }
-            } );
-            recognize.Start();
-
+            InitializeRecogition(LoadJoystick());
         }
 
         // Create a simple handler for the SpeechRecognized event.
         void sre_SpeechRecognized(object sender, SpeechHypothesizedEventArgs e) {
+
             Console.WriteLine( "Speech recognized: " + e.Result.Text + " - Precision: " + e.Result.Confidence );
+            if (e.Result.Confidence < 0.1) {
+                return;
+            }
 
             // Search for a key mapped on the command
             var command = joystick.Map.ToList().SingleOrDefault( a => a.Value.Command.Equals( e.Result.Text ) && a.Value.Valid );
@@ -360,6 +335,14 @@ namespace JoySpeech {
 
                 case JoystickKeys.LOGO:
                     PressKey( command.Key );
+                    _canRecognize = false;
+                    Recognize();
+                    JogosForm jogosForm = new JogosForm();
+                    var result = jogosForm.ShowDialog();
+                    if(result == DialogResult.Cancel) {
+                        var g = LoadJoystick( jogosForm.gameChoosed );
+                        InitializeRecogition(g);
+                    }
                     break;
 
                 default:
@@ -409,24 +392,28 @@ namespace JoySpeech {
         }
 
         private void ActiveBox(JoystickKeys key) {
-            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.Green ) );
+                texts[ key ].Invoke( new Action ( () => texts[ key ].BackColor = Color.Green));
         }
 
         private void DesactiveBox(JoystickKeys key) {
-            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White ) );
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White));
         }
 
         private void PressKey(JoystickKeys key) {
+            this.Invoke(new Action( async ()=> {
             input.Keyboard.KeyDown( joystick.Map[ key ].Input );
-            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.Green ) );
-            Thread.Sleep( 150 );
+                texts[ key ].BackColor = Color.Green;
+                await Task.Delay( 150 );
+                texts[ key ].BackColor = Color.White;
             input.Keyboard.KeyUp( joystick.Map[ key ].Input );
-            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White ) );
+            } ) );
         }
 
 
-        // Remove image borders
-        public static void UnSemi(Bitmap bmp) {
+
+
+            // Remove image borders
+            public static void UnSemi(Bitmap bmp) {
             Size s = bmp.Size;
             PixelFormat fmt = bmp.PixelFormat;
             Rectangle rect = new Rectangle( Point.Empty, s );
@@ -442,6 +429,87 @@ namespace JoySpeech {
             }
             System.Runtime.InteropServices.Marshal.Copy( data, 0, bmpData.Scan0, data.Length );
             bmp.UnlockBits( bmpData );
+        }
+
+        // Load the joystick file or iniizalize with the default
+        public Grammar LoadJoystick( string name = "" ) {
+            // Create joysticks's files case not exists
+            Initialize ini = new Initialize();
+
+            foreach (var x in texts) {
+                x.Value.Text = String.Empty;
+                x.Value.Enabled = false;
+                x.Value.Font = new Font( FontFamily.GenericSansSerif, 8, FontStyle.Regular );
+                x.Value.BackColor = Color.DarkGray;
+            }
+
+            if (String.IsNullOrEmpty(name) ) {
+                joystick = ini.defaultJoystick;
+
+                foreach (var x in texts) {
+                        x.Value.Text = joystick.Map[ x.Key ].Command;
+                        x.Value.Enabled = false;
+                        x.Value.Font = new Font( FontFamily.GenericSansSerif, 8, FontStyle.Regular );
+                        x.Value.BackColor = Color.White;
+                }
+            } else {
+                // Load saved joysticks
+                using (StreamReader reader = new StreamReader( Directory.GetCurrentDirectory() + @"\Joysticks\"+name+".json" )) {
+                    joystick = JsonConvert.DeserializeObject<Joystick>( reader.ReadToEnd() );
+                    reader.Close();
+                }
+                foreach (var x in texts) {
+                    joystick.Map.TryGetValue( x.Key, out KeyCommand command);
+                    if(command != null) {
+                        x.Value.Invoke( new Action( () => {
+                            x.Value.Text = joystick.Map[ x.Key ].Command;
+                            x.Value.Enabled = false;
+                            x.Value.Font = new Font( FontFamily.GenericSansSerif, 8, FontStyle.Regular );
+                            x.Value.BackColor = Color.White;
+                        } ) );
+                    }
+                }
+            }
+            _canRecognize = false;
+            Recognize();
+            
+            sre = new SpeechRecognitionEngine( new System.Globalization.CultureInfo( "pt-BR" ) );
+
+            // Create a simple grammar that recognizes the commands.
+            Choices commands = new Choices();
+            commands.Add( joystick.Map.ToList().Where( b => b.Value.Valid == true ).Select( a => a.Value.Command ).ToArray() );
+
+            // Create a GrammarBuilder object and append the Choices object.
+            GrammarBuilder gb = new GrammarBuilder();
+            gb.Append( commands );
+
+            // Create the Grammar instance and load it into the speech recognition engine.
+            Grammar g = new Grammar( gb );
+
+            return g;
+        }
+
+        public void InitializeRecogition( Grammar g ) {
+            // Configure the input to the recognizer.
+            sre.SetInputToDefaultAudioDevice();
+
+            sre.LoadGrammar( g );
+
+            // Register a handler for the SpeechRecognized event.
+            sre.SpeechHypothesized += new EventHandler<SpeechHypothesizedEventArgs>( sre_SpeechRecognized );
+
+            // Initilize the recognition in parallel thread
+            _canRecognize = true;
+            Recognize();
+        }
+
+        // Initialize the recognition
+        public void Recognize() {
+            if (_canRecognize) {
+                sre.RecognizeAsync(RecognizeMode.Multiple);
+            } else {
+                sre.RecognizeAsyncCancel();
+            }
         }
     }
 }
