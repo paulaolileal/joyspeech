@@ -114,11 +114,13 @@ namespace JoySpeech {
 
         // Create a simple handler for the SpeechRecognized event.
         void sre_SpeechRecognized(object sender, SpeechHypothesizedEventArgs e) {
-
             Console.WriteLine( "Speech recognized: " + e.Result.Text + " - Precision: " + e.Result.Confidence );
             if (e.Result.Confidence < 0.1) {
                 return;
             }
+
+            var time = new Stopwatch();
+            time.Start();
 
             // Search for a key mapped on the command
             var command = joystick.Map.ToList().SingleOrDefault( a => a.Value.Command.Equals( e.Result.Text ) && a.Value.Valid );
@@ -348,6 +350,9 @@ namespace JoySpeech {
                 default:
                     break;
             }
+            time.Stop();
+            var timeElapsed = time.ElapsedMilliseconds;
+            ReportGenerator.Save( new Record { Game = joystick.Game.Name, Command = e.Result.Text, Precision = e.Result.Confidence, TimeToAction = timeElapsed} );
         }
 
         private void ReleaseMoveKeys(bool arrows, bool stick, bool camera) {

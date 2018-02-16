@@ -136,7 +136,7 @@ namespace JoySpeech {
             int cont = 0;
 
             foreach(var image in _joysticks) {
-                imageList.Images.Add( Image.FromFile( image.Game.ImagePath ) );
+                imageList.Images.Add( Image.FromFile( Directory.GetCurrentDirectory() + @"\Joysticks\" + image.Game.ImagePath ) );
                 AddRow( listView1, cont, image.Game.Name);
                 cont++;
             }
