@@ -14,10 +14,15 @@ namespace JoySpeech.Components {
         public Joystick defaultJoystick;
 
         public Initialize() {
+
+            if (!Directory.Exists( Directory.GetCurrentDirectory() + @"\Joysticks\" )) {
+                Directory.CreateDirectory( Directory.GetCurrentDirectory() + @"\Joysticks\" );
+            }
+
             defaultJoystick = new Joystick {
                 Game = new Game {
                     Name = "Default",
-                    ImagePath = @"C:\Users\p-lea\Documents\Projetos\JoySpeech\JoySpeech\bin\x86\Debug\Joysticks\Default.jpg"
+                    ImagePath = "Default.jpg"
                 },
                 Map = new Dictionary<JoystickKeys, KeyCommand>()
             };
@@ -232,7 +237,7 @@ namespace JoySpeech.Components {
                 Joystick km = new Joystick {
                     Game = new Game {
                         Name = "Super Mario World",
-                        ImagePath = @"C:\Users\p-lea\Documents\Projetos\JoySpeech\JoySpeech\bin\x86\Debug\Joysticks\Super_mario_world.jpg"
+                        ImagePath = "Super_mario_world.jpg"
                     },
                     Map = new Dictionary<JoystickKeys, KeyCommand>()
                 };
@@ -339,7 +344,7 @@ namespace JoySpeech.Components {
                 Joystick km = new Joystick {
                     Game = new Game {
                         Name = "Sonic Mania",
-                        ImagePath = @"C:\Users\p-lea\Documents\Projetos\JoySpeech\JoySpeech\bin\x86\Debug\Joysticks\Sonic_Mania.jpg"
+                        ImagePath = "Sonic_Mania.jpg"
                     },
                     Map = new Dictionary<JoystickKeys, KeyCommand>()
                 };
@@ -407,9 +412,7 @@ namespace JoySpeech.Components {
                     Input = VirtualKeyCode.NONAME
                 } );
 
-                if (!Directory.Exists( Directory.GetCurrentDirectory() + @"\Joysticks\" )) {
-                    Directory.CreateDirectory( Directory.GetCurrentDirectory() + @"\Joysticks\" );
-                }
+
 
                 var json = JsonConvert.SerializeObject( km, Formatting.Indented );
                 using (StreamWriter writer = new StreamWriter( Directory.GetCurrentDirectory() + @"\Joysticks\" + km.Game.Name + ".json" )) {
