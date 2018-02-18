@@ -35,14 +35,15 @@ namespace JoySpeech {
         bool _STICK;
         bool _TRIGGER;
         bool _CAMERA;
-        
+        bool _RECOGNIZE;
+
 
         // Action variables
         bool _A;
         bool _B;
         bool _X;
         bool _Y;
-        
+
 
         bool _canRecognize;
 
@@ -50,12 +51,13 @@ namespace JoySpeech {
             // Create a new SpeechRecognitionEngine instance.
             sre = new SpeechRecognitionEngine( new System.Globalization.CultureInfo( "pt-BR" ) );
             input = new InputSimulator();
-            
+
             // Initialize control variables
             _HOLD_MOVE = false;
             _STICK = false;
             _CAMERA = false;
             _TRIGGER = false;
+            _RECOGNIZE = true;
 
             _canRecognize = true;
 
@@ -106,15 +108,15 @@ namespace JoySpeech {
 
 
             // Remove the joystck's border
-            UnSemi( ( Bitmap ) this.pictureBox1.Image );
-            
+            UnSemi( ( Bitmap )this.pictureBox1.Image );
+
             // Initilize the recognition in parallel thread
-            InitializeRecogition(LoadJoystick());
+            InitializeRecogition( LoadJoystick() );
         }
 
         // Create a simple handler for the SpeechRecognized event.
         void sre_SpeechRecognized(object sender, SpeechHypothesizedEventArgs e) {
-            Console.WriteLine( "Speech recognized: " + e.Result.Text + " - Precision: " + e.Result.Confidence );
+            Console.WriteLine( "Speech recognized: " + e.Result.Text + " - Precision: " + e.Result.Confidence + " Recognition: "+ _RECOGNIZE );
             if (e.Result.Confidence < 0.1) {
                 return;
             }
@@ -129,221 +131,258 @@ namespace JoySpeech {
 
             switch (command.Key) {
 
+                case JoystickKeys.RECOGNIZE:
+                    _RECOGNIZE = !_RECOGNIZE;
+                    AllKeys( _RECOGNIZE );
+                    break;
+
                 // Case controllers:
                 case JoystickKeys.STICK:
-                    _STICK = !_STICK;
-                    if (_STICK) {
-                        ActiveBox( command.Key );
-                    } else {
-                        ReleaseMoveKeys( false, true, false );
-                        DesactiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        _STICK = !_STICK;
+                        if (_STICK) {
+                            ActiveBox( command.Key );
+                        } else {
+                            ReleaseMoveKeys( false, true, false );
+                            DesactiveBox( command.Key );
+                        }
                     }
                     break;
 
                 case JoystickKeys.CAMERA:
-                    _CAMERA = !_CAMERA;
-                    if (_CAMERA) {
-                        ActiveBox( command.Key );
-                    } else {
-                        ReleaseMoveKeys( false, false, true );
-                        DesactiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        _CAMERA = !_CAMERA;
+                        if (_CAMERA) {
+                            ActiveBox( command.Key );
+                        } else {
+                            ReleaseMoveKeys( false, false, true );
+                            DesactiveBox( command.Key );
+                        }
                     }
                     break;
 
                 case JoystickKeys.HOLD_MOVE:
-                    _HOLD_MOVE = !_HOLD_MOVE;
-                    if (_HOLD_MOVE) {
-                        ActiveBox( command.Key );
-                    } else {
-                        ReleaseMoveKeys(true, true, true);
-                        DesactiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        _HOLD_MOVE = !_HOLD_MOVE;
+                        if (_HOLD_MOVE) {
+                            ActiveBox( command.Key );
+                        } else {
+                            ReleaseMoveKeys( true, true, true );
+                            DesactiveBox( command.Key );
+                        }
                     }
                     break;
 
                 case JoystickKeys.TRIGGER:
-                    _TRIGGER = !_TRIGGER;
-                    if (_TRIGGER) {
-                        ActiveBox( command.Key );
-                    } else {
-                        DesactiveBox( command.Key );
-                        ReleaseTriggerKeys();
+                    if (_RECOGNIZE) {
+                        _TRIGGER = !_TRIGGER;
+                        if (_TRIGGER) {
+                            ActiveBox( command.Key );
+                        } else {
+                            DesactiveBox( command.Key );
+                            ReleaseTriggerKeys();
+                        }
                     }
                     break;
 
                 // Case moving:
                 case JoystickKeys.LEFT:
-                    ReleaseMoveKeys( true, true, true );
-                    if (_STICK) {
-                        joystickKey = JoystickKeys.STICK_LEFT;
-                    } else if (_CAMERA) {
-                        joystickKey = JoystickKeys.CAMERA_LEFT;
-                    } else if (_TRIGGER) {
-                        joystickKey = JoystickKeys.LB;
-                    } else {
-                        joystickKey = JoystickKeys.LEFT;
-                    }
-                    virtualKey = joystick.Map[ joystickKey ].Input;
-                    if (_HOLD_MOVE && !_TRIGGER) {
-                        input.Keyboard.KeyDown( virtualKey );
-                        ActiveBox( joystickKey );
-                    } else if (_HOLD_ACTION && _TRIGGER) {
-                        input.Keyboard.KeyDown( virtualKey );
-                        ActiveBox( joystickKey );
-                    } else {
-                        PressKey( joystickKey );
+                    if (_RECOGNIZE) {
+                        ReleaseMoveKeys( true, true, true );
+                        if (_STICK) {
+                            joystickKey = JoystickKeys.STICK_LEFT;
+                        } else if (_CAMERA) {
+                            joystickKey = JoystickKeys.CAMERA_LEFT;
+                        } else if (_TRIGGER) {
+                            joystickKey = JoystickKeys.LB;
+                        } else {
+                            joystickKey = JoystickKeys.LEFT;
+                        }
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                        if (_HOLD_MOVE && !_TRIGGER) {
+                            input.Keyboard.KeyDown( virtualKey );
+                            ActiveBox( joystickKey );
+                        } else if (_HOLD_ACTION && _TRIGGER) {
+                            input.Keyboard.KeyDown( virtualKey );
+                            ActiveBox( joystickKey );
+                        } else {
+                            PressKey( joystickKey );
+                        }
                     }
                     break;
 
                 case JoystickKeys.RIGHT:
-                    ReleaseMoveKeys(true, true, true);
-                    if (_STICK) {
-                        joystickKey = JoystickKeys.STICK_RIGHT;
-                    } else if (_CAMERA) {
-                        joystickKey = JoystickKeys.CAMERA_RIGHT;
-                    } else if (_TRIGGER) {
-                        joystickKey = JoystickKeys.RB;
-                    } else {
-                        joystickKey = JoystickKeys.RIGHT;
-                    }
-                    virtualKey = joystick.Map[ joystickKey ].Input;
-                    if (_HOLD_MOVE && !_TRIGGER) {
-                        input.Keyboard.KeyDown( virtualKey );
-                        ActiveBox( joystickKey );
-                    } else if (_HOLD_ACTION && _TRIGGER) {
-                        input.Keyboard.KeyDown( virtualKey );
-                        ActiveBox( joystickKey );
-                    } else {
-                        PressKey( joystickKey );
+                    if (_RECOGNIZE) {
+                        ReleaseMoveKeys( true, true, true );
+                        if (_STICK) {
+                            joystickKey = JoystickKeys.STICK_RIGHT;
+                        } else if (_CAMERA) {
+                            joystickKey = JoystickKeys.CAMERA_RIGHT;
+                        } else if (_TRIGGER) {
+                            joystickKey = JoystickKeys.RB;
+                        } else {
+                            joystickKey = JoystickKeys.RIGHT;
+                        }
+                        virtualKey = joystick.Map[ joystickKey ].Input;
+                        if (_HOLD_MOVE && !_TRIGGER) {
+                            input.Keyboard.KeyDown( virtualKey );
+                            ActiveBox( joystickKey );
+                        } else if (_HOLD_ACTION && _TRIGGER) {
+                            input.Keyboard.KeyDown( virtualKey );
+                            ActiveBox( joystickKey );
+                        } else {
+                            PressKey( joystickKey );
+                        }
                     }
                     break;
 
                 case JoystickKeys.UP:
-                    ReleaseMoveKeys(true, true, true);
-                    if (_STICK) {
-                        joystickKey = JoystickKeys.STICK_UP;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
-                    } else if (_CAMERA) {
-                        joystickKey = JoystickKeys.CAMERA_UP;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
-                    } else {
-                        joystickKey = JoystickKeys.UP;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
-                    }
-                    if (_HOLD_MOVE) {
-                        input.Keyboard.KeyDown( virtualKey );
-                        ActiveBox( joystickKey );
-                    } else {
-                        PressKey( joystickKey );
+                    if (_RECOGNIZE) {
+                        ReleaseMoveKeys( true, true, true );
+                        if (_STICK) {
+                            joystickKey = JoystickKeys.STICK_UP;
+                            virtualKey = joystick.Map[ joystickKey ].Input;
+                        } else if (_CAMERA) {
+                            joystickKey = JoystickKeys.CAMERA_UP;
+                            virtualKey = joystick.Map[ joystickKey ].Input;
+                        } else {
+                            joystickKey = JoystickKeys.UP;
+                            virtualKey = joystick.Map[ joystickKey ].Input;
+                        }
+                        if (_HOLD_MOVE) {
+                            input.Keyboard.KeyDown( virtualKey );
+                            ActiveBox( joystickKey );
+                        } else {
+                            PressKey( joystickKey );
+                        }
                     }
                     break;
 
                 case JoystickKeys.DOWN:
-                    if (_STICK) {
-                        joystickKey = JoystickKeys.STICK_DOWN;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
-                    } else if (_CAMERA) {
-                        joystickKey = JoystickKeys.CAMERA_DOWN;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
-                    } else {
-                        joystickKey = JoystickKeys.DOWN;
-                        virtualKey = joystick.Map[ joystickKey ].Input;
-                    }
-                    if (_HOLD_MOVE) {
-                        input.Keyboard.KeyDown( virtualKey );
-                        ActiveBox( joystickKey );
-                    } else {
-                        PressKey( joystickKey );
+                    if (_RECOGNIZE) {
+                        if (_STICK) {
+                            joystickKey = JoystickKeys.STICK_DOWN;
+                            virtualKey = joystick.Map[ joystickKey ].Input;
+                        } else if (_CAMERA) {
+                            joystickKey = JoystickKeys.CAMERA_DOWN;
+                            virtualKey = joystick.Map[ joystickKey ].Input;
+                        } else {
+                            joystickKey = JoystickKeys.DOWN;
+                            virtualKey = joystick.Map[ joystickKey ].Input;
+                        }
+                        if (_HOLD_MOVE) {
+                            input.Keyboard.KeyDown( virtualKey );
+                            ActiveBox( joystickKey );
+                        } else {
+                            PressKey( joystickKey );
+                        }
                     }
                     break;
 
                 case JoystickKeys.STOP:
-                    ReleaseMoveKeys(true, true, true);
-                    ReleaseActionKeys();
-                    ReleaseControlKeys();
-                    ReleaseTriggerKeys();
-                    PressKey( command.Key );
+                    if (_RECOGNIZE) {
+                        ReleaseMoveKeys( true, true, true );
+                        ReleaseActionKeys();
+                        ReleaseControlKeys();
+                        ReleaseTriggerKeys();
+                        PressKey( command.Key );
+                    }
                     break;
 
                 // Case action:
                 case JoystickKeys.A:
-                    if (command.Value.CanHold) {
-                        _A = !_A;
-                        if (_A) {
-                            input.Keyboard.KeyDown( command.Value.Input );
-                            ActiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        if (command.Value.CanHold) {
+                            _A = !_A;
+                            if (_A) {
+                                input.Keyboard.KeyDown( command.Value.Input );
+                                ActiveBox( command.Key );
+                            } else {
+                                input.Keyboard.KeyUp( command.Value.Input );
+                                DesactiveBox( command.Key );
+                            }
                         } else {
-                            input.Keyboard.KeyUp( command.Value.Input );
-                            DesactiveBox( command.Key );
+                            PressKey( command.Key );
                         }
-                    } else {
-                        PressKey( command.Key );
                     }
                     break;
 
                 case JoystickKeys.B:
-                    if (command.Value.CanHold) {
-                        _B = !_B;
-                        if (_B) {
-                            input.Keyboard.KeyDown( command.Value.Input );
-                            ActiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        if (command.Value.CanHold) {
+                            _B = !_B;
+                            if (_B) {
+                                input.Keyboard.KeyDown( command.Value.Input );
+                                ActiveBox( command.Key );
+                            } else {
+                                input.Keyboard.KeyUp( command.Value.Input );
+                                DesactiveBox( command.Key );
+                            }
                         } else {
-                            input.Keyboard.KeyUp( command.Value.Input );
-                            DesactiveBox( command.Key );
+                            PressKey( command.Key );
                         }
-                    } else {
-                        PressKey( command.Key );
                     }
                     break;
 
                 case JoystickKeys.X:
-                    if (command.Value.CanHold) {
-                        _X = !_X;
-                        if (_X) {
-                            input.Keyboard.KeyDown( command.Value.Input );
-                            ActiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        if (command.Value.CanHold) {
+                            _X = !_X;
+                            if (_X) {
+                                input.Keyboard.KeyDown( command.Value.Input );
+                                ActiveBox( command.Key );
+                            } else {
+                                input.Keyboard.KeyUp( command.Value.Input );
+                                DesactiveBox( command.Key );
+                            }
+                            texts[ command.Key ].Invoke( new Action( () => texts[ command.Key ].BackColor = ( _X ? Color.Green : Color.White ) ) );
                         } else {
-                            input.Keyboard.KeyUp( command.Value.Input );
-                            DesactiveBox( command.Key );
+                            PressKey( command.Key );
                         }
-                        texts[ command.Key ].Invoke( new Action( () => texts[ command.Key ].BackColor = ( _X ? Color.Green : Color.White ) ) );
-                    } else {
-                        PressKey( command.Key );
                     }
                     break;
 
                 case JoystickKeys.Y:
-                    if (command.Value.CanHold) {
-                        _Y = !_Y;
-                        if (_Y) {
-                            input.Keyboard.KeyDown( command.Value.Input );
-                            ActiveBox( command.Key );
+                    if (_RECOGNIZE) {
+                        if (command.Value.CanHold) {
+                            _Y = !_Y;
+                            if (_Y) {
+                                input.Keyboard.KeyDown( command.Value.Input );
+                                ActiveBox( command.Key );
+                            } else {
+                                input.Keyboard.KeyUp( command.Value.Input );
+                                DesactiveBox( command.Key );
+                            }
                         } else {
-                            input.Keyboard.KeyUp( command.Value.Input );
-                            DesactiveBox( command.Key );
+                            PressKey( command.Key );
                         }
-                    } else {
-                        PressKey( command.Key );
                     }
                     break;
 
                 // Case menu:
                 case JoystickKeys.START:
-                    PressKey( command.Key );
+                    if (_RECOGNIZE) {
+                        PressKey( command.Key );
+                    }
                     break;
 
                 case JoystickKeys.SELECT:
-                    PressKey( command.Key );
+                    if (_RECOGNIZE) {
+                        PressKey( command.Key );
+                    }
                     break;
 
                 case JoystickKeys.LOGO:
-                    PressKey( command.Key );
-                    _canRecognize = false;
-                    Recognize();
-                    JogosForm jogosForm = new JogosForm();
-                    var result = jogosForm.ShowDialog();
-                    if(result == DialogResult.Cancel) {
-                        var g = LoadJoystick( jogosForm.gameChoosed );
-                        InitializeRecogition(g);
+                    if (_RECOGNIZE) {
+                        PressKey( command.Key );
+                        _canRecognize = false;
+                        Recognize();
+                        JogosForm jogosForm = new JogosForm();
+                        var result = jogosForm.ShowDialog();
+                        if (result == DialogResult.Cancel) {
+                            var g = LoadJoystick( jogosForm.gameChoosed );
+                            InitializeRecogition( g );
+                        }
                     }
                     break;
 
@@ -352,11 +391,11 @@ namespace JoySpeech {
             }
             time.Stop();
             var timeElapsed = time.ElapsedMilliseconds;
-            ReportGenerator.Save( new Record { Game = joystick.Game.Name, Command = e.Result.Text, Precision = e.Result.Confidence, TimeToAction = timeElapsed} );
+            ReportGenerator.Save( new Record { Game = joystick.Game.Name, Command = e.Result.Text, Precision = e.Result.Confidence, TimeToAction = timeElapsed } );
         }
 
         private void ReleaseMoveKeys(bool arrows, bool stick, bool camera) {
-            foreach (var key in joystick.GetMoveKeys( arrows, stick, camera)) {
+            foreach (var key in joystick.GetMoveKeys( arrows, stick, camera )) {
                 if (input.InputDeviceState.IsKeyDown( key.Value.Input )) {
                     input.Keyboard.KeyUp( key.Value.Input );
                 }
@@ -397,28 +436,47 @@ namespace JoySpeech {
         }
 
         private void ActiveBox(JoystickKeys key) {
-                texts[ key ].Invoke( new Action ( () => texts[ key ].BackColor = Color.Green));
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.Green ) );
         }
 
         private void DesactiveBox(JoystickKeys key) {
-            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White));
+            texts[ key ].Invoke( new Action( () => texts[ key ].BackColor = Color.White ) );
         }
 
         private void PressKey(JoystickKeys key) {
-            this.Invoke(new Action( async ()=> {
-            input.Keyboard.KeyDown( joystick.Map[ key ].Input );
+            this.Invoke( new Action( async () => {
+                input.Keyboard.KeyDown( joystick.Map[ key ].Input );
                 texts[ key ].BackColor = Color.Green;
                 await Task.Delay( 150 );
                 texts[ key ].BackColor = Color.White;
-            input.Keyboard.KeyUp( joystick.Map[ key ].Input );
+                input.Keyboard.KeyUp( joystick.Map[ key ].Input );
             } ) );
         }
 
+        private void AllKeys( bool block ) {
+            if (!block) {
+                ReleaseActionKeys();
+                ReleaseControlKeys();
+                ReleaseMoveKeys( true, true, true );
+                ReleaseTriggerKeys();
+
+                this.Invoke( new Action( () => {
+                    foreach (var box in texts) {
+                        box.Value.BackColor = Color.DimGray;
+                    }
+                } ) );
+            } else {
+                this.Invoke( new Action( () => {
+                    foreach (var box in texts) {
+                        box.Value.BackColor = Color.White;
+                    }
+                } ) );
+            }
+        }
 
 
-
-            // Remove image borders
-            public static void UnSemi(Bitmap bmp) {
+        // Remove image borders
+        public static void UnSemi(Bitmap bmp) {
             Size s = bmp.Size;
             PixelFormat fmt = bmp.PixelFormat;
             Rectangle rect = new Rectangle( Point.Empty, s );
@@ -429,7 +487,7 @@ namespace JoySpeech {
             for (int y = 0; y < s.Height; y++) {
                 for (int x = 0; x < s.Width; x++) {
                     int index = y * bmpData.Stride + x * 4;
-                    data[ index + 3 ] = ( data[ index + 3 ] < 255 ) ? ( byte ) 0 : ( byte ) 255;
+                    data[ index + 3 ] = ( data[ index + 3 ] < 255 ) ? ( byte )0 : ( byte )255;
                 }
             }
             System.Runtime.InteropServices.Marshal.Copy( data, 0, bmpData.Scan0, data.Length );
@@ -437,7 +495,7 @@ namespace JoySpeech {
         }
 
         // Load the joystick file or iniizalize with the default
-        public Grammar LoadJoystick( string name = "" ) {
+        public Grammar LoadJoystick(string name = "") {
             // Create joysticks's files case not exists
             Initialize ini = new Initialize();
 
@@ -448,24 +506,24 @@ namespace JoySpeech {
                 x.Value.BackColor = Color.DarkGray;
             }
 
-            if (String.IsNullOrEmpty(name) ) {
+            if (String.IsNullOrEmpty( name )) {
                 joystick = ini.defaultJoystick;
 
                 foreach (var x in texts) {
-                        x.Value.Text = joystick.Map[ x.Key ].Command;
-                        x.Value.Enabled = false;
-                        x.Value.Font = new Font( FontFamily.GenericSansSerif, 8, FontStyle.Regular );
-                        x.Value.BackColor = Color.White;
+                    x.Value.Text = joystick.Map[ x.Key ].Command;
+                    x.Value.Enabled = false;
+                    x.Value.Font = new Font( FontFamily.GenericSansSerif, 8, FontStyle.Regular );
+                    x.Value.BackColor = Color.White;
                 }
             } else {
                 // Load saved joysticks
-                using (StreamReader reader = new StreamReader( Directory.GetCurrentDirectory() + @"\Joysticks\"+name+".json" )) {
+                using (StreamReader reader = new StreamReader( Directory.GetCurrentDirectory() + @"\Joysticks\" + name + ".json" )) {
                     joystick = JsonConvert.DeserializeObject<Joystick>( reader.ReadToEnd() );
                     reader.Close();
                 }
                 foreach (var x in texts) {
-                    joystick.Map.TryGetValue( x.Key, out KeyCommand command);
-                    if(command != null) {
+                    joystick.Map.TryGetValue( x.Key, out KeyCommand command );
+                    if (command != null) {
                         x.Value.Invoke( new Action( () => {
                             x.Value.Text = joystick.Map[ x.Key ].Command;
                             x.Value.Enabled = false;
@@ -477,7 +535,7 @@ namespace JoySpeech {
             }
             _canRecognize = false;
             Recognize();
-            
+
             sre = new SpeechRecognitionEngine( new System.Globalization.CultureInfo( "pt-BR" ) );
 
             // Create a simple grammar that recognizes the commands.
@@ -494,7 +552,7 @@ namespace JoySpeech {
             return g;
         }
 
-        public void InitializeRecogition( Grammar g ) {
+        public void InitializeRecogition(Grammar g) {
             // Configure the input to the recognizer.
             sre.SetInputToDefaultAudioDevice();
 
@@ -511,7 +569,7 @@ namespace JoySpeech {
         // Initialize the recognition
         public void Recognize() {
             if (_canRecognize) {
-                sre.RecognizeAsync(RecognizeMode.Multiple);
+                sre.RecognizeAsync( RecognizeMode.Multiple );
             } else {
                 sre.RecognizeAsyncCancel();
             }
