@@ -47,6 +47,8 @@ namespace JoySpeech.Models {
         RB,
         RT,
 
+        RECOGNIZE,
+
         OTHER,
         NONE
     }
@@ -60,6 +62,8 @@ namespace JoySpeech.Models {
 
         STICK,
         CAMERA,
-        ARROW
+        ARROW,
+
+        OTHER
     }
 }

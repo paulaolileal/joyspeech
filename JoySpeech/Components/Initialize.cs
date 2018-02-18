@@ -27,6 +27,13 @@ namespace JoySpeech.Components {
                 Map = new Dictionary<JoystickKeys, KeyCommand>()
             };
 
+            defaultJoystick.Map.Add( JoystickKeys.RECOGNIZE,
+            new KeyCommand {
+                Command = "RECONHECER",
+                Category = { KeyCategory.OTHER },
+                Input = VirtualKeyCode.NONAME
+            } );
+
             defaultJoystick.Map.Add( JoystickKeys.STICK,
             new KeyCommand {
                 Command = "ANALOGICO",
@@ -242,7 +249,13 @@ namespace JoySpeech.Components {
                     Map = new Dictionary<JoystickKeys, KeyCommand>()
                 };
 
-                
+                km.Map.Add( JoystickKeys.RECOGNIZE,
+                new KeyCommand {
+                    Command = "RECONHECER",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
                 km.Map.Add( JoystickKeys.LEFT,
                 new KeyCommand {
                     Command = "ESQUERDA",
@@ -348,6 +361,13 @@ namespace JoySpeech.Components {
                     },
                     Map = new Dictionary<JoystickKeys, KeyCommand>()
                 };
+
+                km.Map.Add( JoystickKeys.RECOGNIZE,
+                new KeyCommand {
+                    Command = "RECONHECER",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
 
                 km.Map.Add( JoystickKeys.LEFT,
                 new KeyCommand {
