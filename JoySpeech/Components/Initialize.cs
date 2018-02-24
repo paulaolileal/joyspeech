@@ -27,9 +27,16 @@ namespace JoySpeech.Components {
                 Map = new Dictionary<JoystickKeys, KeyCommand>()
             };
 
-            defaultJoystick.Map.Add( JoystickKeys.RECOGNIZE,
+            defaultJoystick.Map.Add( JoystickKeys.RECOGNIZE_START,
             new KeyCommand {
-                Command = "RECONHECER",
+                Command = "INICIAR",
+                Category = { KeyCategory.OTHER },
+                Input = VirtualKeyCode.NONAME
+            } );
+
+            defaultJoystick.Map.Add( JoystickKeys.RECOGNIZE_STOP,
+            new KeyCommand {
+                Command = "PAUSAR",
                 Category = { KeyCategory.OTHER },
                 Input = VirtualKeyCode.NONAME
             } );
@@ -200,7 +207,7 @@ namespace JoySpeech.Components {
 
             defaultJoystick.Map.Add( JoystickKeys.START,
             new KeyCommand {
-                Command = "INICIAR",
+                Command = "MENU",
                 Category = { KeyCategory.MENU },
                 Input = VirtualKeyCode.SPACE
             } );
@@ -226,7 +233,7 @@ namespace JoySpeech.Components {
                 Input = VirtualKeyCode.NONAME
             } );
 
-            if(( Directory.GetFiles( Directory.GetCurrentDirectory() + @"\Joysticks" ).SingleOrDefault( a => a.Equals( "Default.json" ) ) == null )) {
+            if (( Directory.GetFiles( Directory.GetCurrentDirectory() + @"\Joysticks" ).SingleOrDefault( a => a.Equals( "Default.json" ) ) == null )) {
                 var json = JsonConvert.SerializeObject( defaultJoystick, Formatting.Indented );
                 using (StreamWriter writer = new StreamWriter( Directory.GetCurrentDirectory() + @"\Joysticks\" + defaultJoystick.Game.Name + ".json" )) {
                     writer.Write( json );
@@ -249,9 +256,16 @@ namespace JoySpeech.Components {
                     Map = new Dictionary<JoystickKeys, KeyCommand>()
                 };
 
-                km.Map.Add( JoystickKeys.RECOGNIZE,
+                km.Map.Add( JoystickKeys.RECOGNIZE_START,
                 new KeyCommand {
-                    Command = "RECONHECER",
+                    Command = "INICIAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_STOP,
+                new KeyCommand {
+                    Command = "PAUSAR",
                     Category = { KeyCategory.OTHER },
                     Input = VirtualKeyCode.NONAME
                 } );
@@ -318,10 +332,10 @@ namespace JoySpeech.Components {
                     Category = { KeyCategory.ACTION },
                     Input = VirtualKeyCode.VK_X
                 } );
-                
+
                 km.Map.Add( JoystickKeys.START,
                 new KeyCommand {
-                    Command = "INICIAR",
+                    Command = "MENU",
                     Category = { KeyCategory.MENU },
                     Input = VirtualKeyCode.SPACE
                 } );
@@ -362,9 +376,16 @@ namespace JoySpeech.Components {
                     Map = new Dictionary<JoystickKeys, KeyCommand>()
                 };
 
-                km.Map.Add( JoystickKeys.RECOGNIZE,
+                km.Map.Add( JoystickKeys.RECOGNIZE_START,
                 new KeyCommand {
-                    Command = "RECONHECER",
+                    Command = "INICIAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_STOP,
+                new KeyCommand {
+                    Command = "PAUSAR",
                     Category = { KeyCategory.OTHER },
                     Input = VirtualKeyCode.NONAME
                 } );
@@ -413,7 +434,7 @@ namespace JoySpeech.Components {
 
                 km.Map.Add( JoystickKeys.START,
                 new KeyCommand {
-                    Command = "INICIAR",
+                    Command = "MEUNU",
                     Category = { KeyCategory.MENU },
                     Input = VirtualKeyCode.RETURN
                 } );

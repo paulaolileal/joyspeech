@@ -53,6 +53,9 @@ namespace JoySpeech {
             this.lbBox = new System.Windows.Forms.TextBox();
             this.triggerBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.exitButton = new System.Windows.Forms.Button();
+            this.recognizeBox = new System.Windows.Forms.TextBox();
+            this.minimizeButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,7 +96,7 @@ namespace JoySpeech {
             // 
             // logoBox
             // 
-            this.logoBox.Location = new System.Drawing.Point(314, 69);
+            this.logoBox.Location = new System.Drawing.Point(314, 84);
             this.logoBox.Name = "logoBox";
             this.logoBox.ReadOnly = true;
             this.logoBox.Size = new System.Drawing.Size(56, 20);
@@ -292,6 +295,42 @@ namespace JoySpeech {
             this.pictureBox1.Size = new System.Drawing.Size(685, 464);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
+            // 
+            // exitButton
+            // 
+            this.exitButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.exitButton.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitButton.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.exitButton.Location = new System.Drawing.Point(346, 1);
+            this.exitButton.Name = "exitButton";
+            this.exitButton.Size = new System.Drawing.Size(24, 24);
+            this.exitButton.TabIndex = 30;
+            this.exitButton.Text = "X";
+            this.exitButton.UseVisualStyleBackColor = false;
+            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            // 
+            // recognizeBox
+            // 
+            this.recognizeBox.Location = new System.Drawing.Point(314, 58);
+            this.recognizeBox.Name = "recognizeBox";
+            this.recognizeBox.ReadOnly = true;
+            this.recognizeBox.Size = new System.Drawing.Size(56, 20);
+            this.recognizeBox.TabIndex = 31;
+            this.recognizeBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // minimizeButton
+            // 
+            this.minimizeButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.minimizeButton.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minimizeButton.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.minimizeButton.Location = new System.Drawing.Point(314, 1);
+            this.minimizeButton.Name = "minimizeButton";
+            this.minimizeButton.Size = new System.Drawing.Size(24, 24);
+            this.minimizeButton.TabIndex = 32;
+            this.minimizeButton.Text = "_";
+            this.minimizeButton.UseVisualStyleBackColor = false;
+            this.minimizeButton.Click += new System.EventHandler(this.minimizeButton_Click);
             // 
             // Form1
             // 
@@ -299,6 +338,9 @@ namespace JoySpeech {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(685, 466);
+            this.Controls.Add(this.minimizeButton);
+            this.Controls.Add(this.recognizeBox);
+            this.Controls.Add(this.exitButton);
             this.Controls.Add(this.triggerBox);
             this.Controls.Add(this.lbBox);
             this.Controls.Add(this.rbBox);
@@ -333,6 +375,7 @@ namespace JoySpeech {
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+            
 
         }
 
@@ -365,6 +408,9 @@ namespace JoySpeech {
         private System.Windows.Forms.TextBox rbBox;
         private System.Windows.Forms.TextBox lbBox;
         private System.Windows.Forms.TextBox triggerBox;
+        private System.Windows.Forms.Button exitButton;
+        private System.Windows.Forms.TextBox recognizeBox;
+        private System.Windows.Forms.Button minimizeButton;
     }
 }
 

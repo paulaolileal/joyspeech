@@ -47,7 +47,8 @@ namespace JoySpeech.Models {
         RB,
         RT,
 
-        RECOGNIZE,
+        RECOGNIZE_START,
+        RECOGNIZE_STOP,
 
         OTHER,
         NONE

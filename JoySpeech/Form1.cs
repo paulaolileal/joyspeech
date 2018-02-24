@@ -101,6 +101,8 @@ namespace JoySpeech {
                 { JoystickKeys.HOLD_MOVE, hold_MoveBox },
                 { JoystickKeys.STOP, stopBox },
                 { JoystickKeys.TRIGGER, triggerBox },
+                { JoystickKeys.RECOGNIZE_START, recognizeBox },
+                { JoystickKeys.RECOGNIZE_STOP, recognizeBox },
                 // Trigger
                 { JoystickKeys.LB, lbBox },
                 { JoystickKeys.RB, rbBox },
@@ -131,9 +133,18 @@ namespace JoySpeech {
 
             switch (command.Key) {
 
-                case JoystickKeys.RECOGNIZE:
-                    _RECOGNIZE = !_RECOGNIZE;
-                    AllKeys( _RECOGNIZE );
+                case JoystickKeys.RECOGNIZE_START:
+                    if (!_RECOGNIZE) {
+                        _RECOGNIZE = true;
+                        AllKeys( block: _RECOGNIZE );
+                    }
+                    break;
+
+                case JoystickKeys.RECOGNIZE_STOP:
+                    if (_RECOGNIZE) {
+                        _RECOGNIZE = false;
+                        AllKeys( block: _RECOGNIZE );
+                    }
                     break;
 
                 // Case controllers:
@@ -465,11 +476,22 @@ namespace JoySpeech {
                         box.Value.BackColor = Color.DimGray;
                     }
                 } ) );
+
+                this.Invoke( new Action( () => {
+                    texts[ JoystickKeys.RECOGNIZE_START ].BackColor = Color.White;
+                    texts[ JoystickKeys.RECOGNIZE_START ].Text = joystick.Map.SingleOrDefault( a => a.Key == JoystickKeys.RECOGNIZE_START ).Value.Command;
+                } ) );
+
             } else {
                 this.Invoke( new Action( () => {
                     foreach (var box in texts) {
                         box.Value.BackColor = Color.White;
                     }
+                } ) );
+
+                this.Invoke( new Action( () => {
+                    texts[ JoystickKeys.RECOGNIZE_STOP ].BackColor = Color.White;
+                    texts[ JoystickKeys.RECOGNIZE_STOP ].Text = joystick.Map.SingleOrDefault( a => a.Key == JoystickKeys.RECOGNIZE_STOP ).Value.Command;
                 } ) );
             }
         }
@@ -572,6 +594,29 @@ namespace JoySpeech {
                 sre.RecognizeAsync( RecognizeMode.Multiple );
             } else {
                 sre.RecognizeAsyncCancel();
+            }
+        }
+
+        private void exitButton_Click(object sender, EventArgs e) {
+            this.Close();
+        }
+
+        private void minimizeButton_Click(object sender, EventArgs e) {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [System.Runtime.InteropServices.DllImportAttribute( "user32.dll" )]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [System.Runtime.InteropServices.DllImportAttribute( "user32.dll" )]
+        public static extern bool ReleaseCapture();
+
+        private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                ReleaseCapture();
+                SendMessage( Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0 );
             }
         }
     }
