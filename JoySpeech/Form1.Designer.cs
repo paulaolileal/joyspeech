@@ -295,7 +295,7 @@ namespace JoySpeech {
             this.pictureBox1.Size = new System.Drawing.Size(685, 464);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler( this.pictureBox_MouseDown );
             // 
             // exitButton
             // 

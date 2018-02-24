@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -388,11 +389,17 @@ namespace JoySpeech {
                         PressKey( command.Key );
                         _canRecognize = false;
                         Recognize();
-                        JogosForm jogosForm = new JogosForm();
-                        var result = jogosForm.ShowDialog();
-                        if (result == DialogResult.Cancel) {
-                            var g = LoadJoystick( jogosForm.gameChoosed );
-                            InitializeRecogition( g );
+                        try {
+                            JogosForm jogosForm = new JogosForm();
+                            var result = jogosForm.ShowDialog();
+                            if (result == DialogResult.Cancel) {
+                                var g = LoadJoystick( jogosForm.gameChoosed );
+                                InitializeRecogition( g );
+                            }
+                        }catch(Exception ex) {
+                            _canRecognize = true;
+                            Recognize();
+                            Console.WriteLine( ex.Message );
                         }
                     }
                     break;
@@ -484,8 +491,16 @@ namespace JoySpeech {
 
             } else {
                 this.Invoke( new Action( () => {
-                    foreach (var box in texts) {
-                        box.Value.BackColor = Color.White;
+                    foreach (var x in texts) {
+                        joystick.Map.TryGetValue( x.Key, out KeyCommand command );
+                        if (command != null) {
+                            x.Value.Invoke( new Action( () => {
+                                x.Value.Text = joystick.Map[ x.Key ].Command;
+                                x.Value.Enabled = false;
+                                x.Value.Font = new Font( FontFamily.GenericSansSerif, 8, FontStyle.Regular );
+                                x.Value.BackColor = Color.White;
+                            } ) );
+                        }
                     }
                 } ) );
 
@@ -605,6 +620,13 @@ namespace JoySpeech {
             this.WindowState = FormWindowState.Minimized;
         }
 
+
+
+
+
+
+        // Drag
+
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
 
@@ -613,7 +635,7 @@ namespace JoySpeech {
         [System.Runtime.InteropServices.DllImportAttribute( "user32.dll" )]
         public static extern bool ReleaseCapture();
 
-        private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e) {
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 ReleaseCapture();
                 SendMessage( Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0 );
