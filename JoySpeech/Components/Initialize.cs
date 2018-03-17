@@ -244,6 +244,9 @@ namespace JoySpeech.Components {
             // Initialize others
             SuperMario();
             SonicMania();
+            ShovelKnight();
+            MarkOfTheNinja();
+            MegamanX();
         }
 
         private void SuperMario() {
@@ -454,6 +457,410 @@ namespace JoySpeech.Components {
                 } );
 
 
+
+                var json = JsonConvert.SerializeObject( km, Formatting.Indented );
+                using (StreamWriter writer = new StreamWriter( Directory.GetCurrentDirectory() + @"\Joysticks\" + km.Game.Name + ".json" )) {
+                    writer.Write( json );
+                    writer.Close();
+                }
+            }
+        }
+
+        private void ShovelKnight() {
+            if (!Directory.Exists( Directory.GetCurrentDirectory() + @"\Joysticks" ) || ( Directory.GetFiles( Directory.GetCurrentDirectory() + @"\Joysticks" ).SingleOrDefault( a => a.Equals( "Shovel Knight.json" ) ) == null )) {
+                Joystick km = new Joystick {
+                    Game = new Game {
+                        Name = "Shovel Knight",
+                        ImagePath = "shovel_Knight.jpg"
+                    },
+                    Map = new Dictionary<JoystickKeys, KeyCommand>()
+                };
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_START,
+                new KeyCommand {
+                    Command = "INICIAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_STOP,
+                new KeyCommand {
+                    Command = "PAUSAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.LEFT,
+                new KeyCommand {
+                    Command = "ESQUERDA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_A
+                } );
+
+                km.Map.Add( JoystickKeys.UP,
+                new KeyCommand {
+                    Command = "CIMA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_W
+                } );
+
+                km.Map.Add( JoystickKeys.RIGHT,
+                new KeyCommand {
+                    Command = "DIREITA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_D
+                } );
+
+                km.Map.Add( JoystickKeys.DOWN,
+                new KeyCommand {
+                    Command = "BAIXO",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_S
+                } );
+
+                km.Map.Add( JoystickKeys.STOP,
+                new KeyCommand {
+                    Command = "PARAR",
+                    Category = { KeyCategory.MOVE },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.A,
+                new KeyCommand {
+                    Command = "PULAR",
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.VK_K
+                } );
+
+                km.Map.Add( JoystickKeys.X,
+                new KeyCommand {
+                    Command = "ATACAR",
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.VK_J
+                } );
+
+                km.Map.Add( JoystickKeys.B,
+                new KeyCommand {
+                    Command = "BOLSA",
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.VK_E
+                } );
+
+                km.Map.Add( JoystickKeys.START,
+                new KeyCommand {
+                    Command = "MENU",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.RETURN
+                } );
+
+                km.Map.Add( JoystickKeys.LOGO,
+                new KeyCommand {
+                    Command = "LOGO",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.HOLD_MOVE,
+                new KeyCommand {
+                    Command = "SEGUIR",
+                    Category = { KeyCategory.CONTROL },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+
+
+                var json = JsonConvert.SerializeObject( km, Formatting.Indented );
+                using (StreamWriter writer = new StreamWriter( Directory.GetCurrentDirectory() + @"\Joysticks\" + km.Game.Name + ".json" )) {
+                    writer.Write( json );
+                    writer.Close();
+                }
+            }
+        }
+
+        private void MarkOfTheNinja() {
+            if (!Directory.Exists( Directory.GetCurrentDirectory() + @"\Joysticks" ) || ( Directory.GetFiles( Directory.GetCurrentDirectory() + @"\Joysticks" ).SingleOrDefault( a => a.Equals( "Mark Of The Ninja.json" ) ) == null )) {
+                Joystick km = new Joystick {
+                    Game = new Game {
+                        Name = "Mark Of The Ninja",
+                        ImagePath = "mark_of_the_ninja.png"
+                    },
+                    Map = new Dictionary<JoystickKeys, KeyCommand>()
+                };
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_START,
+                new KeyCommand {
+                    Command = "INICIAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_STOP,
+                new KeyCommand {
+                    Command = "PAUSAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.STICK,
+                new KeyCommand {
+                    Command = "ANALOGICO",
+                    Category = { KeyCategory.CONTROL },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.STICK_LEFT,
+                new KeyCommand {
+                    Command = "ESQUERDA",
+                    Valid = false,
+                    Category = { KeyCategory.MOVE, KeyCategory.STICK },
+                    Input = VirtualKeyCode.VK_A
+                } );
+
+                km.Map.Add( JoystickKeys.STICK_UP,
+                new KeyCommand {
+                    Command = "CIMA",
+                    Valid = false,
+                    Category = { KeyCategory.MOVE, KeyCategory.STICK },
+                    Input = VirtualKeyCode.VK_W
+                } );
+
+                km.Map.Add( JoystickKeys.STICK_RIGHT,
+                new KeyCommand {
+                    Command = "DIREITA",
+                    Valid = false,
+                    Category = { KeyCategory.MOVE, KeyCategory.STICK },
+                    Input = VirtualKeyCode.VK_D
+                } );
+
+                km.Map.Add( JoystickKeys.STICK_DOWN,
+                new KeyCommand {
+                    Command = "BAIXO",
+                    Valid = false,
+                    Category = { KeyCategory.MOVE, KeyCategory.STICK },
+                    Input = VirtualKeyCode.VK_S
+                } );
+                
+                km.Map.Add( JoystickKeys.LEFT,
+                new KeyCommand {
+                    Command = "ESQUERDA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_A
+                } );
+
+                km.Map.Add( JoystickKeys.UP,
+                new KeyCommand {
+                    Command = "CIMA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_1
+                } );
+
+                km.Map.Add( JoystickKeys.RIGHT,
+                new KeyCommand {
+                    Command = "DIREITA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_2
+                } );
+
+                km.Map.Add( JoystickKeys.DOWN,
+                new KeyCommand {
+                    Command = "BAIXO",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.VK_3
+                } );
+
+                km.Map.Add( JoystickKeys.STOP,
+                new KeyCommand {
+                    Command = "PARAR",
+                    Category = { KeyCategory.MOVE },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.X,
+                new KeyCommand {
+                    Command = "ATACAR",
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.LBUTTON
+                } );
+
+                km.Map.Add( JoystickKeys.Y,
+                new KeyCommand {
+                    Command = "CORRER",
+                    CanHold = true,
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.A,
+                new KeyCommand {
+                    Command = "PULAR",
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.SPACE
+                } );
+
+                km.Map.Add( JoystickKeys.B,
+                new KeyCommand {
+                    Command = "ITEM",
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.VK_E
+                } );
+
+                km.Map.Add( JoystickKeys.TRIGGER,
+            new KeyCommand {
+                Command = "GATILHO",
+                Category = { KeyCategory.CONTROL },
+                Input = VirtualKeyCode.NONAME
+            } );
+
+                km.Map.Add( JoystickKeys.LB,
+                new KeyCommand {
+                    Command = "FOCAR",
+                    Category = { KeyCategory.TRIGGER },
+                    Input = VirtualKeyCode.LCONTROL
+                } );
+
+                km.Map.Add( JoystickKeys.RB,
+                new KeyCommand {
+                    Command = "PENDURAR",
+                    Category = { KeyCategory.TRIGGER },
+                    Input = VirtualKeyCode.RBUTTON
+                } );
+
+                km.Map.Add( JoystickKeys.START,
+                new KeyCommand {
+                    Command = "MENU",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.ESCAPE
+                } );
+
+                km.Map.Add( JoystickKeys.SELECT,
+                new KeyCommand {
+                    Command = "MAPA",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.TAB
+                } );
+
+                km.Map.Add( JoystickKeys.LOGO,
+                new KeyCommand {
+                    Command = "LOGO",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.HOLD_MOVE,
+                new KeyCommand {
+                    Command = "SEGUIR",
+                    Category = { KeyCategory.CONTROL },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+
+
+                var json = JsonConvert.SerializeObject( km, Formatting.Indented );
+                using (StreamWriter writer = new StreamWriter( Directory.GetCurrentDirectory() + @"\Joysticks\" + km.Game.Name + ".json" )) {
+                    writer.Write( json );
+                    writer.Close();
+                }
+            }
+        }
+
+        private void MegamanX() {
+            if (!Directory.Exists( Directory.GetCurrentDirectory() + @"\Joysticks" ) || ( Directory.GetFiles( Directory.GetCurrentDirectory() + @"\Joysticks" ).SingleOrDefault( a => a.Equals( "Megaman X.json" ) ) == null )) {
+                Joystick km = new Joystick {
+                    Game = new Game {
+                        Name = "Megaman X",
+                        ImagePath = "megaman_x.jpg"
+                    },
+                    Map = new Dictionary<JoystickKeys, KeyCommand>()
+                };
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_START,
+                new KeyCommand {
+                    Command = "INICIAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.RECOGNIZE_STOP,
+                new KeyCommand {
+                    Command = "PAUSAR",
+                    Category = { KeyCategory.OTHER },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.LEFT,
+                new KeyCommand {
+                    Command = "ESQUERDA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.LEFT
+                } );
+                km.Map.Add( JoystickKeys.UP,
+                new KeyCommand {
+                    Command = "CIMA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.UP
+                } );
+
+                km.Map.Add( JoystickKeys.RIGHT,
+                new KeyCommand {
+                    Command = "DIREITA",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.RIGHT
+                } );
+
+                km.Map.Add( JoystickKeys.DOWN,
+                new KeyCommand {
+                    Command = "BAIXO",
+                    Category = { KeyCategory.MOVE, KeyCategory.ARROW },
+                    Input = VirtualKeyCode.DOWN
+                } );
+
+                km.Map.Add( JoystickKeys.STOP,
+                new KeyCommand {
+                    Command = "PARAR",
+                    Category = { KeyCategory.MOVE },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.B,
+                new KeyCommand {
+                    Command = "PULAR",
+                    CanHold = true,
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.VK_C
+                } );
+
+                km.Map.Add( JoystickKeys.X,
+                new KeyCommand {
+                    Command = "ATACAR",
+                    CanHold = true,
+                    Category = { KeyCategory.ACTION },
+                    Input = VirtualKeyCode.VK_X
+                } );
+                
+                km.Map.Add( JoystickKeys.START,
+                new KeyCommand {
+                    Command = "MENU",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.SPACE
+                } );
+
+                km.Map.Add( JoystickKeys.LOGO,
+                new KeyCommand {
+                    Command = "LOGO",
+                    Category = { KeyCategory.MENU },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                km.Map.Add( JoystickKeys.HOLD_MOVE,
+                new KeyCommand {
+                    Command = "SEGUIR",
+                    Category = { KeyCategory.CONTROL },
+                    Input = VirtualKeyCode.NONAME
+                } );
+
+                if (!Directory.Exists( Directory.GetCurrentDirectory() + @"\Joysticks\" )) {
+                    Directory.CreateDirectory( Directory.GetCurrentDirectory() + @"\Joysticks\" );
+                }
 
                 var json = JsonConvert.SerializeObject( km, Formatting.Indented );
                 using (StreamWriter writer = new StreamWriter( Directory.GetCurrentDirectory() + @"\Joysticks\" + km.Game.Name + ".json" )) {
